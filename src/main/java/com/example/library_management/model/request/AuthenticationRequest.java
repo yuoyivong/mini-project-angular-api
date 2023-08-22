@@ -1,4 +1,4 @@
-package com.example.library_management.model.dto;
+package com.example.library_management.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,13 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-
-public class UserDTO {
-    private String username;
+public class AuthenticationRequest {
     private String email;
-    private Integer total_published_books;
-    private String role;
+    private String password;
 }
