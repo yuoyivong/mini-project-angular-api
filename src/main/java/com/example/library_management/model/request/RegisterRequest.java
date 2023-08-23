@@ -23,5 +23,5 @@ public class RegisterRequest {
 //    @NotBlank(message = "Password cannot be blank.")
     private String password;
     private Role role;
-    private Integer total_published_books;
+
 }

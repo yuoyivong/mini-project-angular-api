@@ -18,6 +18,5 @@ public class RegisterResponse {
     private String username;
     private String email;
     private Role role;
-//    private Integer total_published_books;
 
 }

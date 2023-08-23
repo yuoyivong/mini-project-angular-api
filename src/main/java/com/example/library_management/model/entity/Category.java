@@ -1,8 +1,6 @@
 package com.example.library_management.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,10 +14,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Category {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer category_id;
 
     @NotBlank
+    @Column(name = "category_name")
     private String categoryName;
 
 }

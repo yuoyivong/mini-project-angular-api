@@ -5,6 +5,7 @@ import com.example.library_management.model.request.CategoryRequest;
 import com.example.library_management.model.response.CategoryResponse;
 import com.example.library_management.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,8 @@ public class CategoryService {
 //                .build();
 //    }
 
+//    add new category
+
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
 
         var category = Category.builder()
@@ -37,16 +40,44 @@ public class CategoryService {
                 .build();
 
         categoryRepository.save(category);
+
         return CategoryResponse.builder()
                 .status(HttpStatus.OK.value())
-                .message("Category added successfully.")
+                .message("Category is added successfully.")
                 .categoryName(category.getCategoryName())
                 .build();
     }
 
-//    public CategoryResponse updateCategory()
+//    update category by id
+    public CategoryResponse updateCategory(Integer category_id, CategoryRequest categoryRequest) throws ChangeSetPersister.NotFoundException {
+        Category existingCategory = categoryRepository.findById(category_id).orElseThrow(ChangeSetPersister.NotFoundException::new);
+
+        existingCategory.setCategoryName(categoryRequest.getCategoryName());
+        categoryRepository.save(existingCategory);
+
+        return CategoryResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Category is updated successfully.")
+                .categoryName(categoryRequest.getCategoryName())
+                .build();
+    }
+
+//    delete category by id
+    public CategoryResponse deleteCategoryById(Integer category_id) {
+        categoryRepository.deleteById(category_id);
+
+        return CategoryResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Category is deleted successfully.")
+                .categoryName("Not existed anymore!")
+                .build();
+    }
 
     public boolean checkIfCategoryAlreadyExist(String categoryName) {
         return categoryRepository.findCategoryByCategoryName(categoryName).isPresent();
+    }
+
+    public boolean checkIfCategoryIdDoesnotExistYet(Integer category_id) {
+        return categoryRepository.findById(category_id).isPresent();
     }
 }
