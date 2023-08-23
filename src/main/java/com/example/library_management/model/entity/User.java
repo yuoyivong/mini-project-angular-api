@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,27 +31,29 @@ public class User implements UserDetails {
 
     @NotBlank
     @Column(name = "username", unique = true)
-    private String user_name;
+    private String username;
 
     @NotBlank
     @Column(name = "email", unique = true)
     private String email;
     @NotBlank
     private String password;
-//    private Integer total_published_books;
-    @NotBlank
+//    @NotBlank
     @Enumerated(EnumType.STRING)
     private Role role;
+
+//    @NotNull
+//    private Integer total_published_books;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
+//    @Override
+//    public String getUsername() {
+//        return username;
+//    }
 
     @Override
     public boolean isAccountNonExpired() {

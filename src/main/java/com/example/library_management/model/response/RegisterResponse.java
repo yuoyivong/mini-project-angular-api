@@ -1,5 +1,7 @@
 package com.example.library_management.model.response;
 
+
+import com.example.library_management.model.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +12,12 @@ import org.springframework.http.HttpStatus;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class RegisterResponse {
     private Integer status;
     private String message;
-    private String token;
+    private String username;
+    private String email;
+    private Role role;
+//    private Integer total_published_books;
 
 }

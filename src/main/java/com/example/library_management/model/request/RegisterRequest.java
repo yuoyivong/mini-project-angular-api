@@ -1,5 +1,6 @@
 package com.example.library_management.model.request;
 
+import com.example.library_management.model.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -12,13 +13,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class RegisterRequest {
-    @NotBlank(message = "Username cannot be blank.")
+//    @NotBlank(message = "Username cannot be blank.")
     private String username;
 
-    @NotBlank(message = "Email cannot be blank.")
-    @Email
+//    @NotBlank(message = "Email cannot be blank.")
+//    @Email
     private String email;
 
-    @NotBlank(message = "Password cannot be blank.")
+//    @NotBlank(message = "Password cannot be blank.")
     private String password;
+    private Role role;
+    private Integer total_published_books;
 }

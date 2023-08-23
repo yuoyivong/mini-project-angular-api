@@ -6,12 +6,16 @@ import com.example.library_management.model.entity.User;
 import com.example.library_management.model.request.AuthenticationRequest;
 import com.example.library_management.model.request.RegisterRequest;
 import com.example.library_management.model.response.AuthenticationResponse;
+import com.example.library_management.model.response.RegisterResponse;
 import com.example.library_management.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,24 +25,20 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
-
-//        if(request.getEmail().isBlank()) {
-//            throw new EmailExceptionHandler("Email cannot be blank!");
-//        }
-//
-//        return null;
+    public RegisterResponse register(RegisterRequest request) {
         var user = User.builder()
-                .user_name(request.getUsername())
+                .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.NORMAL_USER)
+                .role(request.getRole())
                 .build();
-
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
+        return RegisterResponse.builder()
+                .message("Register successfully!")
+                .status(HttpStatus.OK.value())
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .role(request.getRole())
                 .build();
     }
 
@@ -52,7 +52,27 @@ public class AuthenticationService {
         var user = userRepository.findUserByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Login Successfully")
                 .token(jwtToken)
                 .build();
     }
+
+    public boolean checkIfUsernameAlreadyExist(String username) {
+        return userRepository.findUserByUsername(username).isPresent();
+    }
+
+    public boolean checkIfEmailAlreadyExist(String email) {
+        return userRepository.findUserByEmail(email).isPresent();
+    }
+
+    public boolean checkIfPasswordMatchesRegister(String password, String email) {
+        Optional<User> user = userRepository.findUserByEmail(email);
+        if(user == null) {
+            return false;
+        }
+
+        return passwordEncoder.matches(password, user.get().getPassword());
+    }
+
 }
