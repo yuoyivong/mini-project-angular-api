@@ -11,4 +11,9 @@ import java.util.*;
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     Optional<Category> findCategoryByCategoryName(String categoryName);
+
+    List<Category> findCategoryByCategoryId(Integer categoryId);
+
+    List<Category> findCategoriesByBookId(Integer bookId);
+
 }

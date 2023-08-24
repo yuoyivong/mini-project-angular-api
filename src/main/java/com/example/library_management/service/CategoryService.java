@@ -32,13 +32,15 @@ public class CategoryService {
 //    }
 
 //    get category by id
-    public CategoryResponse getCategoryById(Integer categoryId) {
-        categoryRepository.findById(categoryId);
-        return CategoryResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("Category is added successfully.")
+    public List<Category> getCategoryById(Integer categoryId) {
 
-                .build();
+        return categoryRepository.findCategoryByCategoryId(categoryId);
+
+    }
+
+//    get categories by bookId
+    public List<Category> getAllCategoriesByBookId(Integer bookId) {
+        return categoryRepository.findCategoriesByBookId(bookId);
     }
 
 //    add new category

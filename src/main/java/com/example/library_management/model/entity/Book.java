@@ -46,4 +46,20 @@ public class Book {
     )
     private List<Category> categoryList;
 
+    public void addCategory(Category category) {
+        this.categoryList.add(category);
+        category.getBooks().add(this);
+    }
+
+    public void removeCategory(Integer categoryId) {
+        Category category = this.categoryList.stream()
+                .filter(cat -> cat.getCategoryId() == categoryId)
+                .findFirst().orElse(null);
+        if(category != null) {
+            this.categoryList.remove(category);
+            category.getBooks().remove(this);
+        }
+    }
+
+
 }

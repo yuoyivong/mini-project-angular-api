@@ -20,7 +20,8 @@ import java.util.Set;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer category_id;
+    @Column(name = "category_id")
+    private Integer categoryId;
 
     @NotBlank
     @Column(name = "category_name")
@@ -29,5 +30,14 @@ public class Category {
     @ManyToMany(mappedBy = "categoryList", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Book> bookList;
+
+    public List<Book> getBooks() {
+        return bookList;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.bookList = books;
+    }
+
 
 }

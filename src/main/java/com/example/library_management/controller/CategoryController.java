@@ -2,9 +2,12 @@ package com.example.library_management.controller;
 
 import com.example.library_management.Exception.BlankFieldExceptionHandler;
 import com.example.library_management.Exception.IfAlreadyExistValidationException;
+import com.example.library_management.Exception.NotFoundException;
+import com.example.library_management.model.entity.Book;
 import com.example.library_management.model.entity.Category;
 import com.example.library_management.model.request.CategoryRequest;
 import com.example.library_management.model.response.CategoryResponse;
+import com.example.library_management.service.BookService;
 import com.example.library_management.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +31,14 @@ public class CategoryController {
     }
 
 //    get category by id
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Integer categoryId) {
-        return ResponseEntity.ok(categoryService.getCategoryById(categoryId));
+    @GetMapping("/category/{category_id}")
+    public ResponseEntity<List<Category>> getCategoryById(@PathVariable Integer category_id) {
+
+        if(!categoryService.isCategoryIdExist(category_id)) {
+            throw new NotFoundException("This category id is not found.");
+        }
+
+        return ResponseEntity.ok(categoryService.getCategoryById(category_id));
     }
 
 //    add new category

@@ -3,6 +3,7 @@ package com.example.library_management.controller;
 import com.example.library_management.Exception.IfAlreadyExistValidationException;
 import com.example.library_management.Exception.NotFoundException;
 import com.example.library_management.model.entity.Book;
+import com.example.library_management.model.entity.Category;
 import com.example.library_management.model.request.BookRequest;
 import com.example.library_management.model.response.BookResponse;
 import com.example.library_management.service.BookService;
@@ -42,6 +43,18 @@ public class BookController {
 
         return ResponseEntity.ok(bookService.createBook(bookRequest));
 
+    }
+
+    //    get categories by bookId
+    @GetMapping("/books/{bookId}/categories")
+    public ResponseEntity<List<Category>> getAllCategoriesByBookId(@PathVariable Integer bookId) {
+        return ResponseEntity.ok(categoryService.getAllCategoriesByBookId(bookId));
+    }
+
+    //    get all books by categoryId
+    @GetMapping("/categories/{categoryId}/books")
+    public ResponseEntity<List<Book>> getAllBooksByCategoryId(@PathVariable Integer categoryId) {
+        return ResponseEntity.ok(bookService.getAllBooksByCategoryId(categoryId));
     }
 
 }

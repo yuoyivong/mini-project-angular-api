@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class BookRequest {
     private String bookTitle;
     private String author;
-    private Integer categoryId;
+//    private Integer categoryId;
     private String description;
     private String image;
 
