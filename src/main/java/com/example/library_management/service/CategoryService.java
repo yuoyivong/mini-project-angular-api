@@ -31,6 +31,16 @@ public class CategoryService {
 //                .build();
 //    }
 
+//    get category by id
+    public CategoryResponse getCategoryById(Integer categoryId) {
+        categoryRepository.findById(categoryId);
+        return CategoryResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Category is added successfully.")
+
+                .build();
+    }
+
 //    add new category
 
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
@@ -73,11 +83,13 @@ public class CategoryService {
                 .build();
     }
 
-    public boolean checkIfCategoryAlreadyExist(String categoryName) {
+
+    public boolean isCategoryNameExist(String categoryName) {
         return categoryRepository.findCategoryByCategoryName(categoryName).isPresent();
     }
 
-    public boolean checkIfCategoryIdDoesnotExistYet(Integer category_id) {
+    public boolean isCategoryIdExist(Integer category_id) {
         return categoryRepository.findById(category_id).isPresent();
     }
+
 }

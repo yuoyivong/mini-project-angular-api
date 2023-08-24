@@ -1,24 +1,25 @@
 package com.example.library_management.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Builder
+@Table(name = "book")
 public class Book {
     @Id
 //    when the id field in the database is type "serial",
 //    you don't have to add @GenerateValue here
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer book_id;
 
     @NotBlank
@@ -32,5 +33,17 @@ public class Book {
     private String author;
 
     private String image;
+
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "book_details",
+            joinColumns = {
+                    @JoinColumn(name = "book_id")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "category_id")
+            }
+    )
+    private List<Category> categoryList;
 
 }

@@ -27,6 +27,12 @@ public class CategoryController {
         return categoryService.getAllCategories();
     }
 
+//    get category by id
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Integer categoryId) {
+        return ResponseEntity.ok(categoryService.getCategoryById(categoryId));
+    }
+
 //    add new category
     @PostMapping("/category")
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest categoryRequest) {
@@ -35,7 +41,7 @@ public class CategoryController {
             throw new BlankFieldExceptionHandler("Please fill in the category name.");
         }
 
-       if(categoryService.checkIfCategoryAlreadyExist(categoryRequest.getCategoryName())) {
+       if(categoryService.isCategoryNameExist(categoryRequest.getCategoryName())) {
            throw new IfAlreadyExistValidationException("This category already existed.");
        }
 
@@ -52,11 +58,11 @@ public class CategoryController {
             throw new BlankFieldExceptionHandler("Please fill in the category name.");
         }
 
-        if(!categoryService.checkIfCategoryIdDoesnotExistYet(category_id)) {
+        if(!categoryService.isCategoryIdExist(category_id)) {
             throw new IfAlreadyExistValidationException("Category id doesn't exist yet.");
         }
 
-        if(categoryService.checkIfCategoryIdDoesnotExistYet(category_id) && categoryService.checkIfCategoryAlreadyExist(categoryRequest.getCategoryName())) {
+        if(categoryService.isCategoryIdExist(category_id) && categoryService.isCategoryNameExist(categoryRequest.getCategoryName())) {
             throw new IfAlreadyExistValidationException("It already existed.");
         }
 
@@ -67,7 +73,7 @@ public class CategoryController {
     @DeleteMapping("/category/{category_id}")
     public ResponseEntity<CategoryResponse> deleteCategoryById(@PathVariable Integer category_id) {
 
-        if(!categoryService.checkIfCategoryIdDoesnotExistYet(category_id)) {
+        if(!categoryService.isCategoryIdExist(category_id)) {
             throw new IfAlreadyExistValidationException("Cannot delete not existed category id.");
         }
 

@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserNotFoundException.class)
-    ProblemDetail handleUserNotFoundException(UserNotFoundException e) {
+    @ExceptionHandler(NotFoundException.class)
+    ProblemDetail handleUserNotFoundException(NotFoundException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
         problemDetail.setType(URI.create("localhost:8080/error/"));
         problemDetail.setTitle("This user doesn't exist in the world!");
@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
 //    }
 
     @ExceptionHandler(IfAlreadyExistValidationException.class)
-    ProblemDetail handleEmailException(IfAlreadyExistValidationException e) {
+    ProblemDetail handleIfAlreadyExistException(IfAlreadyExistValidationException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
 //        problemDetail.setType(URI.create("localhost:8080/error/"));
 //        problemDetail.setTitle("This user doesn't exist in the world!");
@@ -56,4 +56,10 @@ public class GlobalExceptionHandler {
 
         return problemDetail;
     }
+
+    @ExceptionHandler(InvalidImageException.class)
+    ProblemDetail handleInvalidImageException(InvalidImageException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
 }
