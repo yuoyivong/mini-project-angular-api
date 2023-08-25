@@ -14,8 +14,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     ProblemDetail handleUserNotFoundException(NotFoundException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
-        problemDetail.setType(URI.create("localhost:8080/error/"));
-        problemDetail.setTitle("This user doesn't exist in the world!");
+//        problemDetail.setType(URI.create("localhost:8080/error/"));
+//        problemDetail.setTitle("This user doesn't exist in the world!");
         problemDetail.setProperty("time : ", LocalDateTime.now());
         return problemDetail;
     }

@@ -1,5 +1,6 @@
 package com.example.library_management.repository;
 
+import com.example.library_management.model.entity.Book;
 import com.example.library_management.model.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     List<Category> findCategoryByCategoryId(Integer categoryId);
 
-    List<Category> findCategoriesByBookId(Integer bookId);
+//    List<Category> findCategoriesByBookId(Integer bookId);
 
 }

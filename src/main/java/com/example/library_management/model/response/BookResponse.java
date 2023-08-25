@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BookResponse {
+public class BookResponse<T> {
     private String message;
     private Integer status;
+
+    private T payload;
 
 }

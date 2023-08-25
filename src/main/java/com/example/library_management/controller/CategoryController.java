@@ -9,6 +9,7 @@ import com.example.library_management.model.request.CategoryRequest;
 import com.example.library_management.model.response.CategoryResponse;
 import com.example.library_management.service.BookService;
 import com.example.library_management.service.CategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -20,6 +21,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@SecurityRequirement(name="bearerAuth")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -27,6 +29,9 @@ public class CategoryController {
 //    get all categories
     @GetMapping("/allCategories")
     public List<Category> getAllCategories() {
+        if(categoryService.getAllCategories().isEmpty()) {
+            throw new NotFoundException("There is no any category yet.");
+        }
         return categoryService.getAllCategories();
     }
 

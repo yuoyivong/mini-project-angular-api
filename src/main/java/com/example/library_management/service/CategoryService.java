@@ -33,15 +33,13 @@ public class CategoryService {
 
 //    get category by id
     public List<Category> getCategoryById(Integer categoryId) {
-
         return categoryRepository.findCategoryByCategoryId(categoryId);
-
     }
 
 //    get categories by bookId
-    public List<Category> getAllCategoriesByBookId(Integer bookId) {
-        return categoryRepository.findCategoriesByBookId(bookId);
-    }
+//    public List<Category> getAllCategoriesByBookId(Integer bookId) {
+//        return categoryRepository.findCategoriesByBookId(bookId);
+//    }
 
 //    add new category
 
@@ -92,6 +90,10 @@ public class CategoryService {
 
     public boolean isCategoryIdExist(Integer category_id) {
         return categoryRepository.findById(category_id).isPresent();
+    }
+
+    public boolean isCategoryListExist(List<Integer> categoryListId) {
+        return categoryRepository.findAllById(categoryListId).isEmpty();
     }
 
 }

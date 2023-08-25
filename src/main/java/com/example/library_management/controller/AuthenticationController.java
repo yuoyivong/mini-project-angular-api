@@ -7,6 +7,7 @@ import com.example.library_management.model.request.RegisterRequest;
 import com.example.library_management.model.response.AuthenticationResponse;
 import com.example.library_management.model.response.RegisterResponse;
 import com.example.library_management.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+
 public class AuthenticationController {
     private final AuthenticationService service;
 
@@ -49,10 +51,6 @@ public class AuthenticationController {
             throw new IfAlreadyExistValidationException("This email is not single anymore!");
         }
 
-//        if(request.getTotal_published_books() == null) {
-//            throw new BlankFieldExceptionHandler("Please fill in the empty field.");
-//        }
-
         return ResponseEntity.ok(service.register(request));
     }
     @PostMapping("/login")
@@ -78,4 +76,5 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(service.login(authRequest));
     }
+
 }

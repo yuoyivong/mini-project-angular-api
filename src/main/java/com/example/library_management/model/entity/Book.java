@@ -20,6 +20,7 @@ public class Book {
 //    when the id field in the database is type "serial",
 //    you don't have to add @GenerateValue here
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "book_seq", allocationSize = 1)
     private Integer book_id;
 
     @NotBlank
@@ -34,7 +35,7 @@ public class Book {
 
     private String image;
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
             name = "book_details",
             joinColumns = {
@@ -46,20 +47,20 @@ public class Book {
     )
     private List<Category> categoryList;
 
-    public void addCategory(Category category) {
-        this.categoryList.add(category);
-        category.getBooks().add(this);
-    }
-
-    public void removeCategory(Integer categoryId) {
-        Category category = this.categoryList.stream()
-                .filter(cat -> cat.getCategoryId() == categoryId)
-                .findFirst().orElse(null);
-        if(category != null) {
-            this.categoryList.remove(category);
-            category.getBooks().remove(this);
-        }
-    }
+//    public void addCategory(Category category) {
+//        this.categoryList.add(category);
+//        category.getBooks().add(this);
+//    }
+//
+//    public void removeCategory(Integer categoryId) {
+//        Category category = this.categoryList.stream()
+//                .filter(cat -> cat.getCategoryId() == categoryId)
+//                .findFirst().orElse(null);
+//        if(category != null) {
+//            this.categoryList.remove(category);
+//            category.getBooks().remove(this);
+//        }
+//    }
 
 
 }

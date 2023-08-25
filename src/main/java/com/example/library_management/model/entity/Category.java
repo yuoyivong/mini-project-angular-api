@@ -27,17 +27,17 @@ public class Category {
     @Column(name = "category_name")
     private String categoryName;
 
-    @ManyToMany(mappedBy = "categoryList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "categoryList")
     @JsonIgnore
     private List<Book> bookList;
 
-    public List<Book> getBooks() {
-        return bookList;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.bookList = books;
-    }
+//    public List<Book> getBooks() {
+//        return bookList;
+//    }
+//
+//    public void setBooks(List<Book> books) {
+//        this.bookList = books;
+//    }
 
 
 }
