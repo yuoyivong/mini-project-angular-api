@@ -53,10 +53,11 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(service.register(request));
     }
+
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(
             @RequestBody AuthenticationRequest authRequest
-    ) {
+    ) throws Exception {
 
         if(authRequest.getEmail().isBlank()) {
             throw new BlankFieldExceptionHandler("Field email is empty.");
@@ -74,7 +75,9 @@ public class AuthenticationController {
             throw new IfAlreadyExistValidationException("Password must match when you register!");
         }
 
+
         return ResponseEntity.ok(service.login(authRequest));
     }
+
 
 }
