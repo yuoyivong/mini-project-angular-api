@@ -10,6 +10,7 @@ import com.example.library_management.model.response.CategoryResponse;
 import com.example.library_management.service.BookService;
 import com.example.library_management.service.CategoryService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -20,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/author")
 @SecurityRequirement(name="bearerAuth")
 public class CategoryController {
 

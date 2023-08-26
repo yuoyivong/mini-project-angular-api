@@ -30,30 +30,27 @@ public class User implements UserDetails {
     private UUID user_id;
 
     @NotBlank
-    @Column(name = "username", unique = true)
-    private String username;
+    @Column(name = "reader_name", unique = true)
+    private String readerName;
 
     @NotBlank
     @Column(name = "email", unique = true)
     private String email;
     @NotBlank
     private String password;
-//    @NotBlank
+    //    @NotBlank
     @Enumerated(EnumType.STRING)
     private Role role;
 
-//    @NotNull
-//    private Integer total_published_books;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(role.name().toUpperCase()));
     }
 
-//    @Override
-//    public String getUsername() {
-//        return username;
-//    }
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -74,4 +71,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
+

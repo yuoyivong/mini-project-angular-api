@@ -29,16 +29,18 @@ public class AuthenticationService {
 
     public RegisterResponse register(RegisterRequest request) {
         var user = User.builder()
-                .username(request.getUsername())
+                .readerName(request.getReaderName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
                 .build();
+        System.out.println(request.getReaderName());
         userRepository.save(user);
+
         return RegisterResponse.builder()
                 .message("Register successfully!")
                 .status(HttpStatus.OK.value())
-                .username(request.getUsername())
+                .readerName(request.getReaderName())
                 .email(request.getEmail())
                 .role(request.getRole())
                 .build();
@@ -69,8 +71,8 @@ public class AuthenticationService {
                 .build();
     }
 
-    public boolean checkIfUsernameAlreadyExist(String username) {
-        return userRepository.findUserByUsername(username).isPresent();
+    public boolean checkIfUsernameAlreadyExist(String readerName) {
+        return userRepository.findUserByReaderName(readerName).isPresent();
     }
 
     public boolean checkIfEmailAlreadyExist(String email) {

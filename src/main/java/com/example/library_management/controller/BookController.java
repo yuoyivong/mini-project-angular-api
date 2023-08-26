@@ -27,7 +27,7 @@ public class BookController {
     private final BookService bookService;
     private final UploadFileImageService fileImageService;
     private final CategoryService categoryService;
-    @GetMapping("/allBooks")
+    @GetMapping("/reader/allBooks")
     public List<Book> getAllBooks() {
 
         if(bookService.getAllBooks().isEmpty()) {
@@ -39,7 +39,7 @@ public class BookController {
     }
 
 //    get book detail by book id
-    @GetMapping("/book/{book_id}")
+    @GetMapping("/reader/book/{book_id}")
     public ResponseEntity<BookResponse> getBookDetailByBookId(@PathVariable Integer book_id) {
 
         if(!bookService.isBookAlreadyExist(book_id)) {
@@ -50,12 +50,13 @@ public class BookController {
     }
 
 //    get books by categoryId
-    @GetMapping("/books/{category_id}")
+    @GetMapping("/reader/books/{category_id}")
     public ResponseEntity<List<Book>> getBooksByCategoryId(@PathVariable Integer category_id) {
 
         if(!bookService.isBookAlreadyExist(category_id)) {
             throw new NotFoundException("There is no any matched category id found.");
         }
+
 
         return ResponseEntity.ok(bookService.getBooksByCategoryId(category_id));
     }

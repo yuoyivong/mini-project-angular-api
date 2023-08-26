@@ -27,8 +27,8 @@ public class AuthenticationController {
             @RequestBody RegisterRequest request
     ) {
 
-        if(request.getUsername().isBlank()) {
-            throw new BlankFieldExceptionHandler("Field username is empty");
+        if(request.getReaderName().isBlank()) {
+            throw new BlankFieldExceptionHandler("Field readerName is empty");
         }
 
         if(request.getPassword().isBlank()) {
@@ -43,7 +43,7 @@ public class AuthenticationController {
             throw new IfAlreadyExistValidationException("Invalid email address.");
         }
 
-        if(service.checkIfUsernameAlreadyExist(request.getUsername())) {
+        if(service.checkIfUsernameAlreadyExist(request.getReaderName())) {
             throw new IfAlreadyExistValidationException("This username is already taken!");
         }
 

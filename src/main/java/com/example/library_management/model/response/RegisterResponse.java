@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 public class RegisterResponse {
     private Integer status;
     private String message;
-    private String username;
+    private String readerName;
     private String email;
     private Role role;
 
