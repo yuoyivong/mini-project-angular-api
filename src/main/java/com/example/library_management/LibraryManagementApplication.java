@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 		type = SecuritySchemeType.HTTP,
 		scheme = "bearer"
 )
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class LibraryManagementApplication {
 
 	public static void main(String[] args) {

@@ -19,8 +19,8 @@ public class Book {
     @Id
 //    when the id field in the database is type "serial",
 //    you don't have to add @GenerateValue here
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @SequenceGenerator(name = "book_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @SequenceGenerator(name = "book_seq", allocationSize = 1)
     private Integer book_id;
 
     @NotBlank
