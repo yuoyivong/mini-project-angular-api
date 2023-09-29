@@ -2,7 +2,7 @@
 pipeline {
      agent any
      environment{
-          DOCKER_IMAGE = "Spring-Testing"
+          DOCKER_IMAGE = "spring-testing"
      }
      tools{
           maven 'Maven'
