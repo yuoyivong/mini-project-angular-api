@@ -17,16 +17,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @SecurityRequirement(name="bearerAuth")
+
 public class BookController {
 
     private final BookService bookService;
     private final UploadFileImageService fileImageService;
     private final CategoryService categoryService;
+
     @GetMapping("/reader/allBooks")
     public List<Book> getAllBooks() {
 
