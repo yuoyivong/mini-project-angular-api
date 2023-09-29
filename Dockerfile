@@ -10,7 +10,7 @@ COPY target/*.jar /app/spring.jar
 
 # Expose the port on which your Spring application will run (change as per your application)
 EXPOSE 8081
-#ENV sring.datasource.url=jdbc:postgresql://110.74.194.124:5555/asset-tracer
+ENV sring.datasource.url=jdbc:postgresql://110.74.194.123:5432/monster
 
 # Set the command to run your Spring application when the container starts
 CMD ["java", "-jar", "/app/spring.jar"]
