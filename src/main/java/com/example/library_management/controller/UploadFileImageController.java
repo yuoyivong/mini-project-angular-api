@@ -3,13 +3,17 @@ package com.example.library_management.controller;
 import com.example.library_management.Exception.NotFoundException;
 import com.example.library_management.model.response.UploadFileImageResponse;
 import com.example.library_management.service.UploadFileImageService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -18,14 +22,17 @@ import java.util.List;
 public class UploadFileImageController {
     private final UploadFileImageService fileImageService;
 
-//    upload image
+    //    @Value("${project.image}")
+    private String path = "src/main/resources/images";
+
+    //    upload image
     @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UploadFileImageResponse> uploadFile(@RequestParam MultipartFile file) throws IOException {
         UploadFileImageResponse fileName = fileImageService.uploadFile(file);
         return ResponseEntity.ok(fileName);
     }
 
-//    get all images
+    //    get all images
     @GetMapping("/files")
     public ResponseEntity<UploadFileImageResponse> getAllImages() throws IOException {
 //        Path imagesDir = Paths.get("src/main/resources/images");
@@ -38,8 +45,8 @@ public class UploadFileImageController {
         return ResponseEntity.ok(fileImageService.getAllImages());
     }
 
-//    get a specific image by image name
-    @GetMapping("/file/{imageName}")
+    //    get a specific image by image name
+    @GetMapping(value = "/file/{imageName}")
     public ResponseEntity<UploadFileImageResponse> getImage(@PathVariable String imageName) throws IOException {
 //        Path imagesDir = Paths.get("src/main/resources/images");
 //        List<File> files = Files.list(imagesDir).filter(Files::isRegularFile).map(Path::toFile)
@@ -47,7 +54,7 @@ public class UploadFileImageController {
 //
 //        File image = files.stream().filter(file -> file.getName().equals(imageName)).findFirst().orElse(null);
 
-        if(!fileImageService.isImageExist(imageName)) {
+        if (!fileImageService.isImageExist(imageName)) {
             throw new NotFoundException("Image name is not found.");
         }
 
