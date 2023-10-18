@@ -62,8 +62,6 @@ public class BookController {
         if (bookService.getBooksByCategoryId(category_id).isEmpty()) {
             throw new NotFoundException("There is no any matched category id found.");
         }
-//
-
         return ResponseEntity.ok(bookService.getBooksByCategoryId(category_id));
     }
 
@@ -90,9 +88,9 @@ public class BookController {
             throw new BlankFieldExceptionHandler("Please fill in the description to make a better look.");
         }
 
-        if (!fileImageService.isImageExist(bookRequest.getImage())) {
-            throw new NotFoundException("The image doesn't exist in the system.");
-        }
+//        if (!fileImageService.isImageExist(bookRequest.getImage())) {
+//            throw new NotFoundException("The image doesn't exist in the system.");
+//        }
 
         return ResponseEntity.ok(bookService.createBook(bookRequest));
 
@@ -107,9 +105,9 @@ public class BookController {
             throw new NotFoundException("You cannot update inexistent book.");
         }
 
-        if (!fileImageService.isImageExist(bookRequest.getImage())) {
-            throw new NotFoundException("The image doesn't exist in the system.");
-        }
+//        if (!fileImageService.isImageExist(bookRequest.getImage())) {
+//            throw new NotFoundException("The image doesn't exist in the system.");
+//        }
 
         if (bookRequest.getBookTitle().isBlank() ||
                 bookRequest.getAuthor().isBlank() ||

@@ -22,72 +22,72 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/author")
-@SecurityRequirement(name="bearerAuth")
+@SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-//    get all categories
+    //    get all categories
     @GetMapping("/allCategories")
     public List<Category> getAllCategories() {
-        if(categoryService.getAllCategories().isEmpty()) {
+        if (categoryService.getAllCategories().isEmpty()) {
             throw new NotFoundException("There is no any category yet.");
         }
         return categoryService.getAllCategories();
     }
 
-//    get category by id
+    //    get category by id
     @GetMapping("/category/{category_id}")
     public ResponseEntity<List<Category>> getCategoryById(@PathVariable Integer category_id) {
 
-        if(!categoryService.isCategoryIdExist(category_id)) {
+        if (!categoryService.isCategoryIdExist(category_id)) {
             throw new NotFoundException("This category id is not found.");
         }
 
         return ResponseEntity.ok(categoryService.getCategoryById(category_id));
     }
 
-//    add new category
+    //    add new category
     @PostMapping("/category")
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest categoryRequest) {
 
-        if(categoryRequest.getCategoryName().isBlank()) {
+        if (categoryRequest.getCategoryName().isBlank()) {
             throw new BlankFieldExceptionHandler("Please fill in the category name.");
         }
 
-       if(categoryService.isCategoryNameExist(categoryRequest.getCategoryName())) {
-           throw new IfAlreadyExistValidationException("This category already existed.");
-       }
+        if (categoryService.isCategoryNameExist(categoryRequest.getCategoryName())) {
+            throw new IfAlreadyExistValidationException("This category already existed.");
+        }
 
         return ResponseEntity.ok(categoryService.createCategory(categoryRequest));
 
     }
 
-//    update category by id
+    //    update category by id
     @PutMapping("/category/{category_id}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Integer category_id,
                                                            @RequestBody CategoryRequest categoryRequest) throws ChangeSetPersister.NotFoundException {
 
-        if(categoryRequest.getCategoryName().isBlank()) {
+        if (categoryRequest.getCategoryName().isBlank()) {
             throw new BlankFieldExceptionHandler("Please fill in the category name.");
         }
 
-        if(!categoryService.isCategoryIdExist(category_id)) {
+        if (!categoryService.isCategoryIdExist(category_id)) {
             throw new IfAlreadyExistValidationException("Category id doesn't exist yet.");
         }
 
-        if(categoryService.isCategoryIdExist(category_id) && categoryService.isCategoryNameExist(categoryRequest.getCategoryName())) {
+        if (categoryService.isCategoryIdExist(category_id) && categoryService.isCategoryNameExist(categoryRequest.getCategoryName())) {
             throw new IfAlreadyExistValidationException("It already existed.");
         }
 
         return ResponseEntity.ok(categoryService.updateCategory(category_id, categoryRequest));
     }
 
-//    delete category by id
+    //    delete category by id
     @DeleteMapping("/category/{category_id}")
     public ResponseEntity<CategoryResponse> deleteCategoryById(@PathVariable Integer category_id) {
 
-        if(!categoryService.isCategoryIdExist(category_id)) {
+        if (!categoryService.isCategoryIdExist(category_id)) {
             throw new IfAlreadyExistValidationException("Cannot delete not existed category id.");
         }
 
