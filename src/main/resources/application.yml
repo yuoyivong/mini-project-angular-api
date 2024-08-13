@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: spring-data-jpa-homework
+  datasource:
+    url: jdbc:postgresql://localhost:5433/product_order_db
+    username: postgres
+    password: 1231
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
