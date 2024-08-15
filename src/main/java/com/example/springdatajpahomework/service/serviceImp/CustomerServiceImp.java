@@ -1,34 +1,34 @@
 package com.example.springdatajpahomework.service.serviceImp;
 
 import com.example.springdatajpahomework.dto.CustomerDTO;
-import com.example.springdatajpahomework.model.Customer;
-import com.example.springdatajpahomework.model.Email;
-import com.example.springdatajpahomework.model.Order;
-import com.example.springdatajpahomework.model.OrderStatus;
+import com.example.springdatajpahomework.model.*;
 import com.example.springdatajpahomework.repository.CustomerRepository;
 import com.example.springdatajpahomework.repository.OrderRepository;
 import com.example.springdatajpahomework.repository.ProductRepository;
 import com.example.springdatajpahomework.request.CustomerRequest;
+import com.example.springdatajpahomework.request.OrderRequest;
 import com.example.springdatajpahomework.service.CustomerService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomerServiceImp implements CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
 
-    public CustomerServiceImp(CustomerRepository customerRepository, ProductRepository productRepository, OrderRepository orderRepository) {
+    private final OrderServiceImp orderServiceImp;
+
+    public CustomerServiceImp(CustomerRepository customerRepository, ProductRepository productRepository, OrderRepository orderRepository, OrderServiceImp orderServiceImp) {
         this.customerRepository = customerRepository;
-        this.productRepository = productRepository;
         this.orderRepository = orderRepository;
+        this.orderServiceImp = orderServiceImp;
     }
 
 //    @Override
@@ -36,9 +36,21 @@ public class CustomerServiceImp implements CustomerService {
 //        return customerRepository.findAll();
 //    }
 
+//    @Override
+//    public List<CustomerDTO> getCustomerList() {
+//
+//        return customerRepository.findAll().stream().map(Customer::customerResponse).collect(Collectors.toList());
+//    }
+//
     @Override
-    public List<CustomerDTO> getCustomerList() {
-        return customerRepository.findAll().stream().map(Customer::customerResponse).collect(Collectors.toList());
+    public List<CustomerDTO> getCustomerList(int pageNo, int pageSize, String sortBy, String sortDirection) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Page<Customer> customerPage = customerRepository.findAll(pageable);
+
+        return customerPage.stream().map(Customer::customerResponse).toList();
+
     }
 
     @Override
@@ -47,36 +59,33 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     @Override
-    public Customer addNewCustomer(CustomerRequest customerRequest) {
-//        insert email to email entity
-        Email email = new Email();
-        email.setEmail(customerRequest.getEmail());
+    public CustomerDTO addNewCustomer(CustomerRequest customerRequest) {
+        Email email = insertEmail(customerRequest.getEmail());
 
-//        Float unitPrice = productRepository.getByUnitPrice(customerRequest.getOrderList().getFirst().getProductName());
-        Float unitPrice = productRepository.getByUnitPrice(customerRequest.getOrderList().getFirst().getProductName());
-
-        Integer productId = productRepository.getByProductId(customerRequest.getOrderList().getFirst().getProductName());
-//        insert info to customer entity
+        //        insert info to customer entity
         Customer newCustomer = new Customer();
         newCustomer.setName(customerRequest.getCustomerName());
         newCustomer.setEmail(email);
         newCustomer.setAddress(customerRequest.getAddress());
         newCustomer.setPhoneNumber(customerRequest.getPhoneNumber());
 
-        Order order = new Order();
-        Integer qty = customerRequest.getOrderList().getFirst().getQuantity();
+//        save customer
+        Customer savedCustomer = customerRepository.save(newCustomer);
+//
+        Map<Integer, Integer> productQuantities = new HashMap<>();
 
-        order.setOrderDate(LocalDate.now());
-        order.setCustomer(newCustomer);
-        order.setQuantity(qty);
-        order.setTotalAmount(qty * unitPrice);
-        order.setStatus(OrderStatus.valueOf("PENDING"));
-        List<Order> orderList = new ArrayList<>();
-        newCustomer.setOrderList(orderList);
-        orderRepository.save(order);
-        orderRepository.insertIdIntoPOTable()
+        for (OrderRequest o : customerRequest.getOrderList()) {
+           productQuantities.put(o.getProductId(), o.getQuantity());
+        }
 
-        return customerRepository.save(newCustomer);
+        //        call order function to add order to table order
+        orderServiceImp.createOrderWithProducts(savedCustomer.getCustomerId(), productQuantities);
+
+        List<Order> orderList = orderRepository.findByCustomer_CustomerId(savedCustomer.getCustomerId());
+        savedCustomer.setOrderList(orderList);
+
+        return savedCustomer.customerResponse();
+
     }
 
     @Override
@@ -103,4 +112,35 @@ public class CustomerServiceImp implements CustomerService {
         customerRepository.updateCustomerByCustomerId(id, customerName, address, phoneNumber, email);
 
     }
+
+//    Insert email to email table
+    private Email insertEmail(String e) {
+        //        insert email to email entity
+        Email email = new Email();
+        email.setEmail(e);
+        return email;
+    }
+
+//    Insert order to order table
+//    private Order insertOrder(Integer productId, Integer quantity, Customer newCustomer) {
+//        //        Float unitPrice = productRepository.getByUnitPrice(customerRequest.getOrderList().getFirst().getProductName());
+//        Float unitPrice = productRepository.getByUnitPrice(productId);
+//
+//        Order order = new Order();
+//        order.setOrderDate(LocalDate.now());
+//        order.setCustomer(newCustomer);
+//        order.setTotalAmount(quantity * unitPrice);
+//        order.setStatus(OrderStatus.valueOf("PENDING"));
+//
+//        orderRepository.save(order);
+////        List<Integer> proId = new ArrayList<>();
+////        proId.add(productId);
+////        for(Integer pId : proId) {
+////            orderRepository.insertIdIntoPOTable(pId, order.getOrderId());
+////        }
+////        orderRepository.insertIdIntoPOTable(productId, order.getOrderId());
+//
+//        return order;
+//
+//    }
 }

@@ -17,7 +17,6 @@ public class OrderDTO {
 
     private Integer id;
     private LocalDate orderDate;
-    private Integer quantity;
     private Float totalAmount;
     private OrderStatus status;
     private List<ProductDTO> productList;

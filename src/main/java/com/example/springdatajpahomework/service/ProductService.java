@@ -1,6 +1,7 @@
 package com.example.springdatajpahomework.service;
 
 
+import com.example.springdatajpahomework.dto.ProductDTO;
 import com.example.springdatajpahomework.model.Product;
 import com.example.springdatajpahomework.request.ProductRequest;
 
@@ -9,11 +10,12 @@ import java.util.Optional;
 
 public interface ProductService {
 
-    List<Product> getAllProducts();
+    List<ProductDTO> getAllProducts(int pageNo, int pageSize, String sortBy, String sortDirection);
 
-    Optional<Product> getProductById(Long id);
+    Optional<ProductDTO> getProductById(Long id);
 
-    Product addNewProduct(ProductRequest productRequest);
+//    Product addNewProduct(ProductRequest productRequest);
+    ProductDTO addNewProduct(ProductRequest productRequest);
 
     void deleteProductById(Long id);
 

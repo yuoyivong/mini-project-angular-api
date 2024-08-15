@@ -1,5 +1,6 @@
 package com.example.springdatajpahomework.controller;
 
+import com.example.springdatajpahomework.dto.ProductDTO;
 import com.example.springdatajpahomework.model.Product;
 import com.example.springdatajpahomework.request.ProductRequest;
 import com.example.springdatajpahomework.response.ApiResponse;
@@ -23,13 +24,13 @@ public class ProductController {
 
     //   insert new product
     @PostMapping
-    public ResponseEntity<ApiResponse<Product>> insertNewProduct(@RequestBody ProductRequest productRequest) {
-        Product newProduct = productService.addNewProduct(productRequest);
+    public ResponseEntity<ApiResponse<ProductDTO>> insertNewProduct(@RequestBody ProductRequest productRequest) {
+        ProductDTO newProduct = productService.addNewProduct(productRequest);
 //        newProduct.setProductName(productRequest.getProductName());
 //        newProduct.setUnitPrice(productRequest.getUnitPrice());
 //        newProduct.setDescription(productRequest.getDescription());
 
-        ApiResponse<Product> apiResponse = new ApiResponse<>();
+        ApiResponse<ProductDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.CREATED);
         apiResponse.setMessage("A new product is inserted successfully.");
         apiResponse.setPayload(newProduct);
@@ -38,9 +39,14 @@ public class ProductController {
 
     //   get all products
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<Product>>> getAllProducts() {
-        List<Product> productList = productService.getAllProducts();
-        ApiResponse<List<Product>> apiResponse = new ApiResponse<>();
+    public ResponseEntity<ApiResponse<List<ProductDTO>>> getAllProducts(
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "productId") String sortBy,
+            @RequestParam(defaultValue = "ASC") String sortDirection
+    ) {
+        List<ProductDTO> productList = productService.getAllProducts(pageNo, pageSize, sortBy, sortDirection);
+        ApiResponse<List<ProductDTO>> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Get all products successfully.");
         apiResponse.setPayload(productList);
@@ -49,9 +55,9 @@ public class ProductController {
 
     //   get product by product id
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<Product>>> getProductByProductId(@PathVariable Long id) {
-        Optional<Product> product = productService.getProductById(id);
-        ApiResponse<Optional<Product>> apiResponse = new ApiResponse<>();
+    public ResponseEntity<ApiResponse<Optional<ProductDTO>>> getProductByProductId(@PathVariable Long id) {
+        Optional<ProductDTO> product = productService.getProductById(id);
+        ApiResponse<Optional<ProductDTO>> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Get product with id " + id + " successfully.");
         apiResponse.setPayload(product);
@@ -72,11 +78,11 @@ public class ProductController {
 
     //    update product by id
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<Product>>> updatedProductById(@PathVariable Long id, @RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ApiResponse<Optional<ProductDTO>>> updatedProductById(@PathVariable Long id, @RequestBody ProductRequest productRequest) {
         productService.updateProductById(id, productRequest);
 
-        Optional<Product> updatedProduct = productService.getProductById(id);
-        ApiResponse<Optional<Product>> apiResponse = new ApiResponse<>();
+        Optional<ProductDTO> updatedProduct = productService.getProductById(id);
+        ApiResponse<Optional<ProductDTO>> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Product id " + id + " is updated successfully.");
         apiResponse.setPayload(updatedProduct);

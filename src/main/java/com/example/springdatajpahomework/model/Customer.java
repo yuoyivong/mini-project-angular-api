@@ -45,7 +45,7 @@ public class Customer {
         List<OrderDTO> orderDTOList = new ArrayList<>();
 
         for (Order o : this.orderList) {
-            orderDTOList.add(new OrderDTO(o.getOrderId(), o.getOrderDate(), o.getQuantity(), o.getTotalAmount(), o.getStatus(), o.orderDTOResponse().getProductList()));
+            orderDTOList.add(new OrderDTO(o.getOrderId(), o.getOrderDate(), o.getTotalAmount(), o.getStatus(), o.orderDTOResponse().getProductList()));
         }
 
         customerDTO.setOrderList(orderDTOList);

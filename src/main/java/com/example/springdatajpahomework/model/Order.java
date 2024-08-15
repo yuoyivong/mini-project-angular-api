@@ -8,7 +8,6 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -23,10 +22,10 @@ public class Order {
     @Column(name = "order_date")
     private LocalDate orderDate;
 
-    @Column(nullable = false)
-    private Integer quantity;
+//    @Column(nullable = false)
+//    private Integer quantity;
 
-    @Column(name = "total_amount", nullable = false)
+    @Column(name = "total_amount")
     private Float totalAmount;
 
     @Enumerated(EnumType.STRING)
@@ -36,20 +35,21 @@ public class Order {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "orderList")
-    private List<Product> productList;
+//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "orderList")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "order")
+    private List<ProductOrder> orderProduct = new ArrayList<>();
 
     public OrderDTO orderDTOResponse() {
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setId(this.orderId);
         orderDTO.setOrderDate(this.orderDate);
-        orderDTO.setQuantity(this.quantity);
         orderDTO.setStatus(this.status);
         orderDTO.setTotalAmount(this.totalAmount);
 
         List<ProductDTO> productDTOList = new ArrayList<>();
 
-        for (Product p : this.productList) {
+        for (ProductOrder po : this.orderProduct) {
+            Product p = po.getProduct();
             productDTOList.add(new ProductDTO(p.getProductId(), p.getProductName(), p.getUnitPrice(), p.getDescription()));
         }
 

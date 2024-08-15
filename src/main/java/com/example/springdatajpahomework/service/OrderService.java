@@ -1,27 +1,13 @@
 package com.example.springdatajpahomework.service;
 
 import com.example.springdatajpahomework.model.Order;
-import com.example.springdatajpahomework.request.OrderRequest;
-import org.springframework.data.jpa.repository.Query;
+import com.example.springdatajpahomework.model.OrderStatus;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 public interface OrderService {
 
-    List<Order> getAllOrderList();
+    Order createOrderWithProducts(Integer customerId, Map<Integer, Integer> productQuantities);
 
-    Optional<Order> getOrderByOrderId(Long id);
-
-//    Order createNewOrder(OrderRequest orderRequest);
-
-    void deleteOrderById(Long id);
-
-    void updateOrderByOrderId(Long id, OrderRequest orderRequest);
-
-    @Query(value = """
-        INSERT INTO product_order
-        WHERE product_id = :productId AND order_id = :orderId
-    """, nativeQuery = true)
-    void insertIdIntoPOTable(Integer productId, Integer orderId);
+    void updateOrderByOrderStatus(OrderStatus status, Integer cusId, Integer orderId);
 }
