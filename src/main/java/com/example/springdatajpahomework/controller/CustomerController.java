@@ -1,5 +1,6 @@
 package com.example.springdatajpahomework.controller;
 
+import com.example.springdatajpahomework.dto.CreateCustomerDTO;
 import com.example.springdatajpahomework.dto.CustomerDTO;
 import com.example.springdatajpahomework.model.Customer;
 import com.example.springdatajpahomework.model.OrderStatus;
@@ -27,9 +28,9 @@ public class CustomerController {
 
     //    add new customer
     @PostMapping
-    public ResponseEntity<ApiResponse<CustomerDTO>> insertNewCustomer(@RequestBody CustomerRequest customerRequest) {
-        CustomerDTO newCustomer = customerService.addNewCustomer(customerRequest);
-        ApiResponse<CustomerDTO> customerApiResponse = new ApiResponse<>();
+    public ResponseEntity<ApiResponse<CreateCustomerDTO>> insertNewCustomer(@RequestBody CustomerRequest customerRequest) {
+        CreateCustomerDTO newCustomer = customerService.addNewCustomer(customerRequest);
+        ApiResponse<CreateCustomerDTO> customerApiResponse = new ApiResponse<>();
         customerApiResponse.setStatus(HttpStatus.CREATED);
         customerApiResponse.setMessage("A new customer is inserted successfully.");
         customerApiResponse.setPayload(newCustomer);
@@ -87,28 +88,16 @@ public class CustomerController {
     }
 
     //  update customer by id
-//    @PutMapping("/{id}")
-//    public ResponseEntity<ApiResponse<Optional<CustomerDTO>>> updateCustomerByCustomerId(@PathVariable Long id, @RequestBody CustomerRequest customerRequest) {
-//        customerService.updateCustomerById(id, customerRequest);
-////        customer.setName(customerRequest.getCustomerName());
-//        Optional<CustomerDTO> updatedCustomer = customerService.getCustomerById(id);
-//        ApiResponse<Optional<CustomerDTO>> apiResponse = new ApiResponse<>();
-//        apiResponse.setStatus(HttpStatus.OK);
-//        apiResponse.setMessage("Customer id " + id + " is updated successfully.");
-//        apiResponse.setPayload(updatedCustomer);
-//        return ResponseEntity.ok().body(apiResponse);
-//    }
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<Optional<CustomerDTO>>> updateCustomerByCustomerId(@PathVariable Long id, @RequestBody CustomerRequest customerRequest) {
+        customerService.updateCustomerById(id, customerRequest);
 
-    @PutMapping("/status")
-    public ResponseEntity<ApiResponse<Optional<CustomerDTO>>> updateOrderStatus(@RequestParam OrderStatus status, @RequestParam Integer cusId, @RequestParam Integer orderId) {
-        System.out.println("Status : " + status);
-        orderService.updateOrderByOrderStatus(status, cusId, orderId);
-
-        Optional<CustomerDTO> updatedCustomer = customerService.getCustomerById(Long.valueOf(cusId));
+        Optional<CustomerDTO> updatedCustomer = customerService.getCustomerById(id);
         ApiResponse<Optional<CustomerDTO>> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
-        apiResponse.setMessage("Successfully update the status of order.");
+        apiResponse.setMessage("Customer id " + id + " is updated successfully.");
         apiResponse.setPayload(updatedCustomer);
         return ResponseEntity.ok().body(apiResponse);
     }
+
 }

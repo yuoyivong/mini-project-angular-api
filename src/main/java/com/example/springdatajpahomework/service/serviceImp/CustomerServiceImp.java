@@ -1,5 +1,6 @@
 package com.example.springdatajpahomework.service.serviceImp;
 
+import com.example.springdatajpahomework.dto.CreateCustomerDTO;
 import com.example.springdatajpahomework.dto.CustomerDTO;
 import com.example.springdatajpahomework.model.*;
 import com.example.springdatajpahomework.repository.CustomerRepository;
@@ -21,14 +22,9 @@ import java.util.Optional;
 public class CustomerServiceImp implements CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final OrderRepository orderRepository;
-
-    private final OrderServiceImp orderServiceImp;
 
     public CustomerServiceImp(CustomerRepository customerRepository, ProductRepository productRepository, OrderRepository orderRepository, OrderServiceImp orderServiceImp) {
         this.customerRepository = customerRepository;
-        this.orderRepository = orderRepository;
-        this.orderServiceImp = orderServiceImp;
     }
 
 //    @Override
@@ -59,7 +55,7 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     @Override
-    public CustomerDTO addNewCustomer(CustomerRequest customerRequest) {
+    public CreateCustomerDTO addNewCustomer(CustomerRequest customerRequest) {
         Email email = insertEmail(customerRequest.getEmail());
 
         //        insert info to customer entity
@@ -71,20 +67,8 @@ public class CustomerServiceImp implements CustomerService {
 
 //        save customer
         Customer savedCustomer = customerRepository.save(newCustomer);
-//
-        Map<Integer, Integer> productQuantities = new HashMap<>();
 
-        for (OrderRequest o : customerRequest.getOrderList()) {
-           productQuantities.put(o.getProductId(), o.getQuantity());
-        }
-
-        //        call order function to add order to table order
-        orderServiceImp.createOrderWithProducts(savedCustomer.getCustomerId(), productQuantities);
-
-        List<Order> orderList = orderRepository.findByCustomer_CustomerId(savedCustomer.getCustomerId());
-        savedCustomer.setOrderList(orderList);
-
-        return savedCustomer.customerResponse();
+        return savedCustomer.createCustomerResponse();
 
     }
 

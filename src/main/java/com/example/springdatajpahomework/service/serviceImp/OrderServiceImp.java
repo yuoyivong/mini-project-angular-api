@@ -1,17 +1,17 @@
 package com.example.springdatajpahomework.service.serviceImp;
 
+import com.example.springdatajpahomework.dto.OrderDTO;
 import com.example.springdatajpahomework.model.*;
 import com.example.springdatajpahomework.repository.CustomerRepository;
 import com.example.springdatajpahomework.repository.OrderProductsRepository;
 import com.example.springdatajpahomework.repository.OrderRepository;
 import com.example.springdatajpahomework.repository.ProductRepository;
+import com.example.springdatajpahomework.request.OrderRequest;
 import com.example.springdatajpahomework.service.OrderService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,6 +66,34 @@ public class OrderServiceImp implements OrderService {
     @Override
     public void updateOrderByOrderStatus(OrderStatus status, Integer cusId, Integer orderId) {
         orderRepository.updateOrderByStatusAndOrderId(String.valueOf(status), cusId, orderId);
+    }
+
+    @Override
+    public OrderDTO createNewOrder(Integer cusId, List<OrderRequest> orderRequest) {
+        Map<Integer, Integer> productQuantities = new HashMap<>();
+//
+        for (OrderRequest o : orderRequest) {
+           productQuantities.put(o.getProductId(), o.getQuantity());
+        }
+
+        //        call order function to add order to table order
+        Order order = createOrderWithProducts(cusId, productQuantities);
+        Customer customer = new Customer();
+
+        List<Order> orderList = orderRepository.findByCustomer_CustomerId(cusId);
+        customer.setOrderList(orderList);
+        return order.orderDTOResponse();
+    }
+
+    @Override
+    public List<OrderDTO> getAllOrderByCustomerId(Integer cusId) {
+
+        return orderRepository.findByCustomer_CustomerId(cusId).stream().map(Order::orderDTOResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderDTO getOrderByOrderId(Integer orderId) {
+        return orderRepository.findById(Long.valueOf(orderId)).orElseThrow().orderDTOResponse();
     }
 
 

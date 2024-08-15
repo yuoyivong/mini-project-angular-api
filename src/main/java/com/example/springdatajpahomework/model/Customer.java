@@ -1,5 +1,6 @@
 package com.example.springdatajpahomework.model;
 
+import com.example.springdatajpahomework.dto.CreateCustomerDTO;
 import com.example.springdatajpahomework.dto.CustomerDTO;
 import com.example.springdatajpahomework.dto.OrderDTO;
 import com.example.springdatajpahomework.dto.ProductDTO;
@@ -52,5 +53,17 @@ public class Customer {
 
         return customerDTO;
     }
+
+    public CreateCustomerDTO createCustomerResponse() {
+        CreateCustomerDTO createCustomerDTO = new CreateCustomerDTO();
+        createCustomerDTO.setId(this.customerId);
+        createCustomerDTO.setAddress(this.address);
+        createCustomerDTO.setName(this.name);
+        createCustomerDTO.setEmail(this.email);
+        createCustomerDTO.setPhoneNumber(this.phoneNumber);
+
+        return createCustomerDTO;
+    }
+
 
 }

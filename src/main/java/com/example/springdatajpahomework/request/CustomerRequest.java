@@ -14,5 +14,5 @@ public class CustomerRequest {
     private String address;
     private String phoneNumber;
     private String email;
-    private List<OrderRequest> orderList;
+//    private List<OrderRequest> orderList;
 }

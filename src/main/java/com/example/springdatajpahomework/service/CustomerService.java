@@ -1,5 +1,6 @@
 package com.example.springdatajpahomework.service;
 
+import com.example.springdatajpahomework.dto.CreateCustomerDTO;
 import com.example.springdatajpahomework.dto.CustomerDTO;
 import com.example.springdatajpahomework.request.CustomerRequest;
 
@@ -16,7 +17,7 @@ public interface CustomerService {
 //    Optional<Customer> getCustomerById(Long id);
     Optional<CustomerDTO> getCustomerById(Long id);
 
-    CustomerDTO addNewCustomer(CustomerRequest customerRequest);
+    CreateCustomerDTO addNewCustomer(CustomerRequest customerRequest);
 
     void deleteCustomerById(Long id);
 
