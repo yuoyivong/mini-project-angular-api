@@ -29,5 +29,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     """)
     Float getByUnitPrice(String productName);
 
+    @Query("""
+        SELECT p.productId
+        FROM Product p
+        WHERE p.productName = :productName
+    """)
+    Integer getByProductId(String productName);
+
+
+
 }
 

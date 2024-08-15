@@ -51,4 +51,9 @@ public class OrderServiceImp implements OrderService {
 
     }
 
+    @Override
+    public void insertIdIntoPOTable(Integer productId, Integer orderId) {
+        orderRepository.save(productId, orderId);
+    }
+
 }

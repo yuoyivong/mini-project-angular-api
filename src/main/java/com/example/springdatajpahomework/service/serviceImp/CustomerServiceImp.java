@@ -52,8 +52,10 @@ public class CustomerServiceImp implements CustomerService {
         Email email = new Email();
         email.setEmail(customerRequest.getEmail());
 
+//        Float unitPrice = productRepository.getByUnitPrice(customerRequest.getOrderList().getFirst().getProductName());
         Float unitPrice = productRepository.getByUnitPrice(customerRequest.getOrderList().getFirst().getProductName());
 
+        Integer productId = productRepository.getByProductId(customerRequest.getOrderList().getFirst().getProductName());
 //        insert info to customer entity
         Customer newCustomer = new Customer();
         newCustomer.setName(customerRequest.getCustomerName());
@@ -72,6 +74,7 @@ public class CustomerServiceImp implements CustomerService {
         List<Order> orderList = new ArrayList<>();
         newCustomer.setOrderList(orderList);
         orderRepository.save(order);
+        orderRepository.insertIdIntoPOTable()
 
         return customerRepository.save(newCustomer);
     }
