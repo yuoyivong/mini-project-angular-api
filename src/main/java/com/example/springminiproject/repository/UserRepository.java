@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -23,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     """, nativeQuery = true)
     void updateUserByUserId(Long id, String username, String email, String address, String phoneNumber);
 
+    Optional<User> findUserByEmail(String email);
+    Optional<User> findUserByUsername(String userName);
 }

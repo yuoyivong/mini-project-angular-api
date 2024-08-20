@@ -5,14 +5,21 @@ import com.example.springminiproject.response.dto.CommentDTO;
 import com.example.springminiproject.response.dto.UserDTO;
 import com.example.springminiproject.response.dto.UserEntityDTO;
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Data
 @Entity(name = "user_tb")
-public class User {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +31,8 @@ public class User {
 
     @Column(unique = true, nullable = false)
     private String email;
+
+    private String password;
 
     private String address;
 
@@ -44,6 +53,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Comment> commentList = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public UserDTO userDTOResponse() {
         UserDTO userDTO = new UserDTO();
@@ -69,6 +81,36 @@ public class User {
 //        userDTO.setCommentList(new ArrayList<>(commentDTOList));
 
         return userDTO;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name().toUpperCase()));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
 //    public UserEntityDTO userEntityDTOResponse() {

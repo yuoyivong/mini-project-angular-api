@@ -8,6 +8,7 @@ import com.example.springminiproject.response.ApiResponse;
 import com.example.springminiproject.response.dto.CategoryDTO;
 import com.example.springminiproject.response.dto.UserDTO;
 import com.example.springminiproject.service.CategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/category")
+@SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
 
     private final CategoryService categoryService;

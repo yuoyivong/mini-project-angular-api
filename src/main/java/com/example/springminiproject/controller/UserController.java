@@ -6,6 +6,7 @@ import com.example.springminiproject.response.ApiResponse;
 import com.example.springminiproject.response.dto.UserDTO;
 import com.example.springminiproject.response.dto.UserEntityDTO;
 import com.example.springminiproject.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
     private final UserService userService;
