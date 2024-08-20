@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: spring-mini-project
+  datasource:
+    url: jdbc:postgresql://localhost:5433/mini_project_db
+    username: postgres
+    password: 1231
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+#jwt token
+jwt:
+  secret: "6f1068c1c1ffd3f62b1390ebbddf6a22f15947767e8d6542227fa046f9686d0b"

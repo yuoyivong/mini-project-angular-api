@@ -1,0 +1,31 @@
+services:
+#  spring-homework:
+#    image: 'mini-project-image:latest'
+#    build:
+#      context: .
+#    container_name: spring-homework
+#    depends_on:
+#      - postgres
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/product_order_db
+#      - SPRING_DATASOURCE_USERNAME=postgres
+#      - SPRING_DATASOURCE_PASSWORD=1231
+#      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+#
+#    ports:
+#      - "8081:8080"
+
+  mini-project-postgres:
+    image: postgres:16
+    container_name: mini-project-postgres
+    restart: always
+    environment:
+      POSTGRES_USER : postgres
+      POSTGRES_PASSWORD : 1231
+      POSTGRES_DB : mini_project_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
