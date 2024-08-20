@@ -1,5 +1,6 @@
 package com.example.springminiproject.model;
 
+import com.example.springminiproject.response.dto.CategoryDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -34,4 +35,14 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<Bookmark> bookmarkList;
 
+    public CategoryDTO categoryDTOResponse() {
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setCategoryId(this.categoryId);
+        categoryDTO.setCategoryName(this.categoryName);
+        categoryDTO.setCreatedAt(this.createdAt);
+        categoryDTO.setUpdatedAt(this.updatedAt);
+
+        return categoryDTO;
+
+    }
 }
