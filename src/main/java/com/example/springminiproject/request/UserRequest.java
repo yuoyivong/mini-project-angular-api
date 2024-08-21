@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
 
 @Data
 public class UserRequest {
@@ -25,7 +24,7 @@ public class UserRequest {
     @NotBlank
     private String password;
 
-    @NotBlank(message = "Who do you want to be? An AUTHOR or READER?")
+//    @NotBlank(message = "Who do you want to be? An AUTHOR or READER?")
     private Role role;
 
 }

@@ -6,7 +6,8 @@ import com.example.springminiproject.response.ApiResponse;
 import com.example.springminiproject.response.LoginResponse;
 import com.example.springminiproject.response.dto.UserDTO;
 import com.example.springminiproject.service.AuthenticationService;
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,15 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@RequiredArgsConstructor
-
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
+
     @PostMapping("/register")
+    @Operation(summary = "Register as a new user")
     public ResponseEntity<ApiResponse<UserDTO>> register(
-            @RequestBody UserRequest userRequest
+           @Valid @RequestBody UserRequest userRequest
     ) {
 
 //        if(request.getReaderName().isBlank()) {
@@ -52,13 +56,14 @@ public class AuthenticationController {
 //        }
 
         ApiResponse<UserDTO> apiResponse = new ApiResponse<>();
-        apiResponse.setStatus(HttpStatus.CREATED);
-        apiResponse.setMessage("A new user is created successfully.");
+        apiResponse.setStatus(HttpStatus.OK);
+        apiResponse.setMessage("Registered successfully.");
         apiResponse.setPayload(authenticationService.register(userRequest));
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+        return ResponseEntity.ok().body(apiResponse);
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login via credentials to get token")
     public ResponseEntity<ApiResponse<LoginResponse>> login(
             @RequestBody LoginRequest authRequest
     ) throws Exception {
@@ -80,10 +85,10 @@ public class AuthenticationController {
 //        }
 
         ApiResponse<LoginResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setStatus(HttpStatus.CREATED);
+        apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("You have logged in to the system successfully.");
         apiResponse.setPayload(authenticationService.login(authRequest));
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+        return ResponseEntity.ok().body(apiResponse);
 
     }
 

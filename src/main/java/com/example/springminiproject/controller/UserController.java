@@ -90,6 +90,7 @@ public class UserController {
 
 //    update user by id
     @PutMapping
+    @Operation(summary = "Update current user's information")
     public ResponseEntity<ApiResponse<UserDTO>> updateUserById(@RequestBody UserRequest userRequest) {
         Long id = globalCurrentUser.getCurrentUserInformation().getUserId();
         userService.updateUserById(id, userRequest);

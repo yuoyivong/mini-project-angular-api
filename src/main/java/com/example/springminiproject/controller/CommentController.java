@@ -5,12 +5,15 @@ import com.example.springminiproject.request.CommentRequest;
 import com.example.springminiproject.response.ApiResponse;
 import com.example.springminiproject.response.dto.CommentDTO;
 import com.example.springminiproject.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/comment")
+@SecurityRequirement(name = "bearerAuth")
 public class CommentController {
     private final CommentService commentService;
 
@@ -22,6 +25,7 @@ public class CommentController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get comment by its id")
     public ResponseEntity<ApiResponse<CommentDTO>> getCommentById(@PathVariable Long id, @RequestParam Long articleId) {
         ApiResponse<CommentDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
@@ -32,6 +36,7 @@ public class CommentController {
 
 //    delete comment by id
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete comment its by id")
     public ResponseEntity<ApiResponse<CommentDTO>> deleteCommentById(@PathVariable Long id, @RequestParam Long articleId) {
         Long userId = globalCurrentUser.getCurrentUserInformation().getUserId();
         commentService.deleteCommentById(id, articleId, userId);
@@ -44,6 +49,7 @@ public class CommentController {
 
     //    update comment by id
     @PutMapping("/{id}")
+    @Operation(summary = "Edit comment by its id")
     public ResponseEntity<ApiResponse<CommentDTO>> updateCommentById(@PathVariable Long id, @RequestParam Long articleId, @RequestBody CommentRequest commentRequest) {
 //        Long userId = globalCurrentUser.getCurrentUserInformation().getUserId();
 //        commentService.updateCommentByCommentId(id, articleId, userId, commentRequest);

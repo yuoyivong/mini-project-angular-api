@@ -1,19 +1,16 @@
 package com.example.springminiproject.controller;
 
+import com.example.springminiproject.config.GlobalCurrentUserConfig;
 import com.example.springminiproject.model.Article;
 import com.example.springminiproject.request.ArticleRequest;
 import com.example.springminiproject.request.CommentRequest;
 import com.example.springminiproject.response.ApiResponse;
 import com.example.springminiproject.response.dto.ArticleDTO;
-import com.example.springminiproject.response.dto.UserDTO;
 import com.example.springminiproject.service.ArticleService;
-import com.example.springminiproject.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,19 +19,17 @@ import java.util.List;
 @RequestMapping("/api/v1")
 @SecurityRequirement(name = "bearerAuth")
 public class ArticleController {
-
     private final ArticleService articleService;
-    private final UserService userService;
+    private final GlobalCurrentUserConfig currentUserConfig;
 
-//    GlobalCurrentUser globalCurrentUser = new GlobalCurrentUser();
-
-    public ArticleController(ArticleService articleService, UserService userService) {
+    public ArticleController(ArticleService articleService, GlobalCurrentUserConfig currentUserConfig) {
         this.articleService = articleService;
-        this.userService = userService;
+        this.currentUserConfig = currentUserConfig;
     }
 
 //    create a new article
     @PostMapping("/author/article")
+    @Operation(summary = "Create a new article")
     public ResponseEntity<ApiResponse<ArticleDTO>> insertNewArticle(@RequestBody ArticleRequest articleRequest) {
         ApiResponse<ArticleDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.CREATED);
@@ -45,6 +40,7 @@ public class ArticleController {
 
 //    get all articles
     @GetMapping("/article/all")
+    @Operation(summary = "Get all available articles")
     public ResponseEntity<ApiResponse<List<ArticleDTO>>> getAllArticles(
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "10") int pageSize,
@@ -63,6 +59,7 @@ public class ArticleController {
 
 //    get article by id
     @GetMapping("/article/{id}")
+    @Operation(summary = "Get article by id")
     public ResponseEntity<ApiResponse<ArticleDTO>> getArticleById(@PathVariable Long id) {
         ApiResponse<ArticleDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
@@ -74,6 +71,7 @@ public class ArticleController {
 
 //    delete article by id
     @DeleteMapping("/author/article/{id}")
+    @Operation(summary = "Delete article by id")
     public ResponseEntity<ApiResponse<Article>> deleteArticleById(@PathVariable Long id) {
         articleService.deleteArticleByArticleId(id);
 
@@ -87,6 +85,7 @@ public class ArticleController {
 
 //    update article by id
     @PutMapping("/author/article/{id}")
+    @Operation(summary = "Edit article by id")
     public ResponseEntity<ApiResponse<ArticleDTO>> updateArticleById(@PathVariable Long id, @RequestBody ArticleRequest articleRequest) {
         articleService.updateArticleByArticleId(id, articleRequest);
 
@@ -100,8 +99,9 @@ public class ArticleController {
 
 //    add comment via article id and user id
     @PostMapping("/article/{id}/comment")
+    @Operation(summary = "Post a comment on any article via its id")
     public ResponseEntity<ApiResponse<ArticleDTO>> postCommentOnArticle(@RequestBody CommentRequest cmtRequest, @PathVariable Long id) {
-        Long userId = getCurrentUserInformation().getUserId();
+        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
         articleService.postCommentByArticleId(cmtRequest, id, userId);
         ApiResponse<ArticleDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.CREATED);
@@ -121,6 +121,7 @@ public class ArticleController {
 //    }
 
     @GetMapping("/article/{id}/comment")
+    @Operation(summary = "Get comments on any article")
     public ResponseEntity<ApiResponse<ArticleDTO>> getCommentOnArticle(@PathVariable Long id) {
         ArticleDTO article = articleService.getArticleByArticleId(id);
 
@@ -146,9 +147,9 @@ public class ArticleController {
 //        return ResponseEntity.ok().body(apiResponse);
 //    }
 
-    private UserDTO getCurrentUserInformation() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        return userService.findUserByEmail(userDetails.getUsername());
-    }
+//    private UserDTO getCurrentUserInformation() {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+//        return userService.findUserByEmail(userDetails.getUsername());
+//    }
 }
