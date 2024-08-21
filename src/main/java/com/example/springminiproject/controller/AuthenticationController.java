@@ -1,11 +1,13 @@
 package com.example.springminiproject.controller;
 
 import com.example.springminiproject.request.LoginRequest;
-import com.example.springminiproject.request.RegisterRequest;
+import com.example.springminiproject.request.UserRequest;
+import com.example.springminiproject.response.ApiResponse;
 import com.example.springminiproject.response.LoginResponse;
-import com.example.springminiproject.response.RegisterResponse;
+import com.example.springminiproject.response.dto.UserDTO;
 import com.example.springminiproject.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class AuthenticationController {
 
-    private final AuthenticationService service;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(
-            @RequestBody RegisterRequest request
+    public ResponseEntity<ApiResponse<UserDTO>> register(
+            @RequestBody UserRequest userRequest
     ) {
 
 //        if(request.getReaderName().isBlank()) {
@@ -49,11 +51,15 @@ public class AuthenticationController {
 //            throw new IfAlreadyExistValidationException("This email is not single anymore!");
 //        }
 
-        return ResponseEntity.ok(service.register(request));
+        ApiResponse<UserDTO> apiResponse = new ApiResponse<>();
+        apiResponse.setStatus(HttpStatus.CREATED);
+        apiResponse.setMessage("A new user is created successfully.");
+        apiResponse.setPayload(authenticationService.register(userRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(
+    public ResponseEntity<ApiResponse<LoginResponse>> login(
             @RequestBody LoginRequest authRequest
     ) throws Exception {
 
@@ -73,8 +79,12 @@ public class AuthenticationController {
 //            throw new IfAlreadyExistValidationException("Password must match when you register!");
 //        }
 
+        ApiResponse<LoginResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setStatus(HttpStatus.CREATED);
+        apiResponse.setMessage("You have logged in to the system successfully.");
+        apiResponse.setPayload(authenticationService.login(authRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
 
-        return ResponseEntity.ok(service.login(authRequest));
     }
 
 

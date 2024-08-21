@@ -10,6 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -63,7 +66,18 @@ public class UserServiceImp implements UserService {
     @Override
     public void updateUserById(Long id, UserRequest userRequest) {
 
-        userRepository.updateUserByUserId(id, userRequest.getUsername(), userRequest.getEmail(), userRequest.getAddress(), userRequest.getPhoneNumber());
-
+        userRepository.updateUserByUserId(id,
+                userRequest.getUsername(),
+                userRequest.getEmail(),
+                userRequest.getAddress(),
+                userRequest.getPhoneNumber(),
+                userRequest.getPassword(),
+                String.valueOf(userRequest.getRole()));
     }
+
+    @Override
+    public UserDTO findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email).map(User::userDTOResponse).orElseThrow();
+    }
+
 }

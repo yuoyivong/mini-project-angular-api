@@ -4,12 +4,11 @@ import com.example.springminiproject.config.JwtService;
 import com.example.springminiproject.model.User;
 import com.example.springminiproject.repository.UserRepository;
 import com.example.springminiproject.request.LoginRequest;
-import com.example.springminiproject.request.RegisterRequest;
+import com.example.springminiproject.request.UserRequest;
 import com.example.springminiproject.response.LoginResponse;
-import com.example.springminiproject.response.RegisterResponse;
+import com.example.springminiproject.response.dto.UserDTO;
 import com.example.springminiproject.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -17,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -28,22 +28,19 @@ public class AuthenticationServiceImp implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public RegisterResponse register(RegisterRequest request) {
+    public UserDTO register(UserRequest request) {
         var user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .phoneNumber(request.getPhoneNumber())
+                .address(request.getAddress())
                 .role(request.getRole())
+                .createdAt(LocalDateTime.now())
                 .build();
         userRepository.save(user);
 
-        return RegisterResponse.builder()
-                .message("Register successfully!")
-                .status(HttpStatus.OK.value())
-                .userName(request.getUsername())
-                .email(request.getEmail())
-                .role(request.getRole())
-                .build();
+        return user.userDTOResponse();
     }
 
     @Override
@@ -65,9 +62,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
         var user = userRepository.findUserByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
 
+        System.out.println("User find by email : " + user);
         return LoginResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("Login Successfully")
                 .token(jwtToken)
                 .build();
     }
@@ -82,10 +78,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     public boolean checkIfPasswordMatchesRegister(String password, String email) {
         Optional<User> user = userRepository.findUserByEmail(email);
-        if(user == null) {
-            return false;
-        }
+        return user.filter(value -> passwordEncoder.matches(password, value.getPassword())).isPresent();
 
-        return passwordEncoder.matches(password, user.get().getPassword());
     }
 }

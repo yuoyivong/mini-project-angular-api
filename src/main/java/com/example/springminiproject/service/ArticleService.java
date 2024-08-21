@@ -21,6 +21,6 @@ public interface ArticleService {
 
 //    List<UserCommentDTO> getCommentsByArticleId(Long id);
 
-    void updatePostedComment(String cmt, Long cmtId, Long articleId, Long userId);
+    void updatePostedComment(Long cmtId, Long articleId, Long userId, String cmt);
 
 }

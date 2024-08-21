@@ -1,9 +1,6 @@
 package com.example.springminiproject.model;
 
-import com.example.springminiproject.response.dto.ArticleDTO;
-import com.example.springminiproject.response.dto.CommentDTO;
 import com.example.springminiproject.response.dto.UserDTO;
-import com.example.springminiproject.response.dto.UserEntityDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.Data;
@@ -66,6 +63,7 @@ public class User implements UserDetails {
         userDTO.setPhoneNumber(this.phoneNumber);
         userDTO.setCreatedAt(this.createdAt);
         userDTO.setUpdatedAt(this.updatedAt);
+        userDTO.setRole(this.role);
 
 //        Set<CommentDTO> commentDTOList = new HashSet<>();
 //
@@ -90,6 +88,11 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
         return this.email;
     }
 

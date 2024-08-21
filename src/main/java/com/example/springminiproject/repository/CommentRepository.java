@@ -22,6 +22,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             updated_at = CURRENT_TIMESTAMP
         WHERE comment_id = :cmtId AND article_id = :articleId AND user_id = :userId
     """, nativeQuery = true)
-    void updateComment(String comment, Long cmtId, Long articleId, Long userId);
+    void updateComment(Long cmtId, Long articleId, Long userId, String comment);
 
 }

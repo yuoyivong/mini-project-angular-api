@@ -18,4 +18,6 @@ public interface UserService {
 
     void updateUserById(Long id, UserRequest userRequest);
 
+    UserDTO findUserByEmail(String email);
+
 }

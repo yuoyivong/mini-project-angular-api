@@ -33,7 +33,7 @@ public class SecurityConfiguration {
                 .cors(c -> c.configurationSource(
                         request -> {
                             CorsConfiguration config = new CorsConfiguration();
-                            config.setAllowedOrigins(List.of("http://localhost:8080"));
+                            config.setAllowedOrigins(List.of("http://localhost:3000"));
                             config.setAllowedMethods(Collections.singletonList("*"));
                             config.setAllowCredentials(true);
                             config.setAllowedHeaders(Collections.singletonList("*"));
@@ -41,15 +41,14 @@ public class SecurityConfiguration {
                             config.setMaxAge(3600L);
                             return config;
                         }))
-//                .authorizeHttpRequests(auth -> auth
-////                        .requestMatchers("/api/v1/auth/**","/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
-//                                .requestMatchers("/api/v1/author/**", "/api/v1/book/**").hasAuthority("AUTHOR")
-//                                .requestMatchers("/api/v1/reader/**").hasAnyAuthority("READER", "AUTHOR")
-//                                .requestMatchers("/api/v1/file/**", "/api/v1/files", "/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
-//                                .permitAll()
-//                                .requestMatchers("/**").permitAll()
-//                                .anyRequest().authenticated()
-//                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/author/**").hasAuthority("AUTHOR")
+                        .requestMatchers("/api/v1/article/**", "/api/v1/user/**").hasAnyAuthority("READER", "AUTHOR")
+                        .requestMatchers( "/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
+                        .permitAll()
+                        .requestMatchers("/**").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

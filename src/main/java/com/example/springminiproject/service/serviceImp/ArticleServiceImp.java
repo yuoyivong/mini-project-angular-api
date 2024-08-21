@@ -83,8 +83,8 @@ public class ArticleServiceImp implements ArticleService {
 //    }
 
     @Override
-    public void updatePostedComment(String cmt, Long cmtId, Long articleId, Long userId) {
-        commentRepository.updateComment(cmt, cmtId, articleId, userId);
+    public void updatePostedComment(Long cmtId, Long articleId, Long userId, String cmt) {
+        commentRepository.updateComment(cmtId, articleId, userId, cmt);
     }
 
 }
