@@ -3,11 +3,14 @@ package com.example.springminiproject.model;
 import com.example.springminiproject.response.dto.CommentDTO;
 import com.example.springminiproject.response.dto.UserDTO;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity(name = "comment")
 public class Comment {
 

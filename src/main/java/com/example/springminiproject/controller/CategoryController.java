@@ -1,9 +1,9 @@
 package com.example.springminiproject.controller;
 
+import com.example.springminiproject.config.GlobalCurrentUserConfig;
 import com.example.springminiproject.model.Category;
 import com.example.springminiproject.model.User;
 import com.example.springminiproject.request.CategoryRequest;
-import com.example.springminiproject.request.UserRequest;
 import com.example.springminiproject.response.ApiResponse;
 import com.example.springminiproject.response.dto.CategoryDTO;
 import com.example.springminiproject.response.dto.UserDTO;
@@ -21,18 +21,21 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final GlobalCurrentUserConfig currentUserConfig;
 
 
-    public CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService, GlobalCurrentUserConfig currentUserConfig) {
         this.categoryService = categoryService;
+        this.currentUserConfig = currentUserConfig;
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<CategoryDTO>> createNewCategory(@RequestBody CategoryRequest categoryRequest) {
+        UserDTO user = currentUserConfig.getCurrentUserInformation();
         ApiResponse<CategoryDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.CREATED);
         apiResponse.setMessage("A new category is created successfully.");
-        apiResponse.setPayload(categoryService.insertNewCategory(categoryRequest));
+        apiResponse.setPayload(categoryService.insertNewCategory(user, categoryRequest));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
 
@@ -46,7 +49,8 @@ public class CategoryController {
             @RequestParam(defaultValue = "categoryId") String sortBy,
             @RequestParam(defaultValue = "ASC") String sortDirection) {
 
-        List<CategoryDTO> categoryDTOList = categoryService.getAllCategories(pageNo, pageSize, sortBy, sortDirection);
+        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
+        List<CategoryDTO> categoryDTOList = categoryService.getAllCategories(userId, pageNo, pageSize, sortBy, sortDirection);
         ApiResponse<List<CategoryDTO>> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Get all categories successfully.");
@@ -57,17 +61,19 @@ public class CategoryController {
     //    get user by id
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<CategoryDTO>> getCategoryByCateId(@PathVariable Long id) {
+        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
         ApiResponse<CategoryDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Get category with id " + id + " successfully.");
-        apiResponse.setPayload(categoryService.getCategoryByCategoryId(id));
+        apiResponse.setPayload(categoryService.getCategoryByCategoryId(userId, id));
         return ResponseEntity.ok().body(apiResponse);
     }
 
     //   delete product by id
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Category>> deleteCategoryById(@PathVariable Long id) {
-        categoryService.deleteCategoryByCategoryId(id);
+        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
+        categoryService.deleteCategoryByCategoryId(id, userId);
 
         ApiResponse<Category> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
@@ -80,11 +86,12 @@ public class CategoryController {
     //    update user by id
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<CategoryDTO>> updateCategoryById(@PathVariable Long id, @RequestBody CategoryRequest categoryRequest) {
-        categoryService.updateCategoryByCategoryId(id, categoryRequest);
+        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
+        categoryService.updateCategoryByCategoryId(id, categoryRequest, userId);
         ApiResponse<CategoryDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Category id " + id + " is updated successfully.");
-        apiResponse.setPayload(categoryService.getCategoryByCategoryId(id));
+        apiResponse.setPayload(categoryService.getCategoryByCategoryId(userId, id));
 
         return ResponseEntity.ok().body(apiResponse);
     }

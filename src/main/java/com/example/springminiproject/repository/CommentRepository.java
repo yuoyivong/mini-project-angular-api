@@ -13,6 +13,7 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findCommentsByArticle_ArticleId(Long articleId);
+    Comment findCommentByCommentIdAndArticle_ArticleId(Long cmtId, Long artId);
 
     @Modifying
     @Transactional

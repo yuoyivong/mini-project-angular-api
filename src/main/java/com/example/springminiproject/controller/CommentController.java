@@ -1,5 +1,6 @@
 package com.example.springminiproject.controller;
 
+import com.example.springminiproject.config.GlobalCurrentUserConfig;
 import com.example.springminiproject.request.CommentRequest;
 import com.example.springminiproject.response.ApiResponse;
 import com.example.springminiproject.response.dto.CommentDTO;
@@ -13,24 +14,28 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
     private final CommentService commentService;
 
-//    GlobalCurrentUser globalCurrentUser = new GlobalCurrentUser(userService);
+    private final GlobalCurrentUserConfig globalCurrentUser;
 
-    public CommentController(CommentService commentService) {
+    public CommentController(CommentService commentService, GlobalCurrentUserConfig globalCurrentUser) {
         this.commentService = commentService;
+        this.globalCurrentUser = globalCurrentUser;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<CommentDTO>> getCommentById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<CommentDTO>> getCommentById(@PathVariable Long id, @RequestParam Long articleId) {
         ApiResponse<CommentDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Get comment id " + id + " successfully.");
-        apiResponse.setPayload(commentService.getCommentByCommentId(id));
+        apiResponse.setPayload(commentService.getCommentOnArticle(id, articleId));
         return ResponseEntity.ok().body(apiResponse);
     }
 
 //    delete comment by id
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<CommentDTO>> deleteCommentById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<CommentDTO>> deleteCommentById(@PathVariable Long id, @RequestParam Long articleId) {
+        Long userId = globalCurrentUser.getCurrentUserInformation().getUserId();
+        commentService.deleteCommentById(id, articleId, userId);
+
         ApiResponse<CommentDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Delete comment id " + id + " successfully.");
@@ -46,7 +51,7 @@ public class CommentController {
         ApiResponse<CommentDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Update comment id " + id + " successfully.");
-        apiResponse.setPayload(commentService.getCommentByCommentId(id));
+        apiResponse.setPayload(commentService.getCommentOnArticle(id, articleId));
         return ResponseEntity.ok().body(apiResponse);
     }
 

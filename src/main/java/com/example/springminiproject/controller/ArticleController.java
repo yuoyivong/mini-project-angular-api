@@ -8,7 +8,6 @@ import com.example.springminiproject.response.dto.ArticleDTO;
 import com.example.springminiproject.response.dto.UserDTO;
 import com.example.springminiproject.service.ArticleService;
 import com.example.springminiproject.service.UserService;
-import com.example.springminiproject.utils.GlobalCurrentUser;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

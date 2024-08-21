@@ -17,8 +17,8 @@ public class GlobalCurrentUserConfig {
         this.userService = userService;
     }
 
-    public UserDTO getCurrentUserInformation(Authentication auth) {
-        System.out.println("Auth : " + auth);
+    public UserDTO getCurrentUserInformation() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
         return userService.findUserByEmail(userDetails.getUsername());
     }

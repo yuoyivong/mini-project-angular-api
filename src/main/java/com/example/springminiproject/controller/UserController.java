@@ -5,6 +5,7 @@ import com.example.springminiproject.request.UserRequest;
 import com.example.springminiproject.response.ApiResponse;
 import com.example.springminiproject.response.dto.UserDTO;
 import com.example.springminiproject.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,15 +65,15 @@ public class UserController {
 //        return ResponseEntity.ok().body(apiResponse);
 //    }
     @GetMapping
+    @Operation(summary = "Get current user info")
     public ResponseEntity<ApiResponse<UserDTO>> getCurrentUserInfo() {
-        UserDTO currentUser = globalCurrentUser.getCurrentUserInformation(SecurityContextHolder.getContext().getAuthentication());
+        UserDTO currentUser = globalCurrentUser.getCurrentUserInformation();
         ApiResponse<UserDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Get current user information successfully.");
         apiResponse.setPayload(currentUser);
         return ResponseEntity.ok().body(apiResponse);
     }
-
 
     //   delete product by id
 //    @DeleteMapping("/{id}")
@@ -90,8 +91,7 @@ public class UserController {
 //    update user by id
     @PutMapping
     public ResponseEntity<ApiResponse<UserDTO>> updateUserById(@RequestBody UserRequest userRequest) {
-
-        Long id = globalCurrentUser.getCurrentUserInformation(SecurityContextHolder.getContext().getAuthentication()).getUserId();
+        Long id = globalCurrentUser.getCurrentUserInformation().getUserId();
         userService.updateUserById(id, userRequest);
 
         ApiResponse<UserDTO> apiResponse = new ApiResponse<>();

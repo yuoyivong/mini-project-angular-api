@@ -11,11 +11,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.*;
 
-@Data
-@Entity(name = "user_tb")
-@Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity(name = "user_tb")
+@Builder
 public class User implements UserDetails {
 
     @Id

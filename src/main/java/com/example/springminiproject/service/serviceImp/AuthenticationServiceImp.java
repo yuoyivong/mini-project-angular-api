@@ -13,6 +13,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +29,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+
 
     @Override
     public UserDTO register(UserRequest request) {
@@ -81,4 +85,11 @@ public class AuthenticationServiceImp implements AuthenticationService {
         return user.filter(value -> passwordEncoder.matches(password, value.getPassword())).isPresent();
 
     }
+
+//    @Override
+//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//        Optional<User> userDetail = userRepository.findUserByEmail(email);
+//        return userDetail.map(UserInfoDetails::new).orElseThrow(()-> new UsernameNotFoundException("User not found."));
+//    }
+
 }

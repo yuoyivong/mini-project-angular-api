@@ -43,7 +43,7 @@ public class SecurityConfiguration {
                         }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/author/**").hasAuthority("AUTHOR")
-                        .requestMatchers("/api/v1/article/**", "/api/v1/user/**").hasAnyAuthority("READER", "AUTHOR")
+                        .requestMatchers("/api/v1/article/**", "/api/v1/user/**", "/api/v1/comment/**").hasAnyAuthority("READER", "AUTHOR")
                         .requestMatchers( "/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
                         .permitAll()
                         .requestMatchers("/**").permitAll()

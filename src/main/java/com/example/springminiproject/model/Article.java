@@ -4,12 +4,15 @@ import com.example.springminiproject.response.dto.ArticleDTO;
 import com.example.springminiproject.response.dto.CommentDTO;
 import com.example.springminiproject.response.dto.UserDTO;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity(name = "article")
 public class Article {
 

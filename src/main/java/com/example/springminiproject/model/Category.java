@@ -2,12 +2,15 @@ package com.example.springminiproject.model;
 
 import com.example.springminiproject.response.dto.CategoryDTO;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity(name = "category")
 public class Category {
 

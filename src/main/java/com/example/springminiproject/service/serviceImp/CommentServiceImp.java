@@ -16,12 +16,13 @@ public class CommentServiceImp implements CommentService {
     }
 
     @Override
-    public CommentDTO getCommentByCommentId(Long id) {
-        return commentRepository.findById(id).map(Comment::commentDTOResponse).orElseThrow();
+    public CommentDTO getCommentOnArticle(Long id, Long articleId) {
+//        return commentRepository.findById(id).map(Comment::commentDTOResponse).orElseThrow();
+        return commentRepository.findCommentByCommentIdAndArticle_ArticleId(id, articleId).commentDTOResponse();
     }
 
     @Override
-    public void deleteCommentById(Long id) {
+    public void deleteCommentById(Long id, Long articleId, Long userId) {
         commentRepository.deleteById(id);
     }
 
