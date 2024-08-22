@@ -1,7 +1,11 @@
 package com.example.springminiproject.service.serviceImp;
 
+import com.example.springminiproject.exception.AlreadyExistsException;
+import com.example.springminiproject.exception.BlankFieldException;
+import com.example.springminiproject.exception.NotFoundException;
 import com.example.springminiproject.model.Category;
 import com.example.springminiproject.model.User;
+import com.example.springminiproject.repository.CategoryArticleRepository;
 import com.example.springminiproject.repository.CategoryRepository;
 import com.example.springminiproject.request.CategoryRequest;
 import com.example.springminiproject.response.dto.CategoryDTO;
@@ -29,14 +33,32 @@ public class CategoryServiceImp implements CategoryService {
 
     @Override
     public CategoryDTO insertNewCategory(UserDTO user, CategoryRequest categoryRequest) {
-        User u = new User();
-        u.setUserId(user.getUserId());
-        Category category = new Category();
-        category.setCategoryName(categoryRequest.getCategoryName());
-        category.setCreatedAt(LocalDateTime.now());
-        category.setUser(u);
+        checkCategoryName(categoryRequest.getCategoryName());
 
-        return categoryRepository.save(category).categoryDTOResponse();
+        try {
+            User u = new User();
+            u.setUserId(user.getUserId());
+            u.setUsername(user.getUsername());
+            u.setEmail(user.getEmail());
+            u.setAddress(user.getAddress());
+            u.setPhoneNumber(user.getPhoneNumber());
+            u.setCreatedAt(user.getCreatedAt());
+            u.setUpdatedAt(user.getUpdatedAt());
+            u.setRole(user.getRole());
+
+            Category category = new Category();
+            category.setCategoryName(categoryRequest.getCategoryName());
+            category.setCreatedAt(LocalDateTime.now());
+            category.setUser(u);
+//        category.setAmountOfArticles(categoryArticleRepository.countArticleByCategoryId(category.getCategoryId()));
+
+            return categoryRepository.save(category).categoryDTOResponse();
+
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (AlreadyExistsException e) {
+            throw new AlreadyExistsException(e.getMessage());
+        }
 
     }
 
@@ -45,6 +67,8 @@ public class CategoryServiceImp implements CategoryService {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
+        categoryRepository.updateAmountOfArticlesField();
+
         Page<Category> categoryPage = categoryRepository.findAllByUser_UserId(userId, pageable);
 
         return categoryPage.stream().map(Category::categoryDTOResponse).collect(Collectors.toList());
@@ -52,17 +76,48 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Override
-    public CategoryDTO getCategoryByCategoryId(Long userId, Long id) {
-        return categoryRepository.findByCategoryIdAndUser_UserId(id, userId).categoryDTOResponse();
+    public CategoryDTO getCategoryByCategoryId(Long id, Long userId) {
+        return categoryRepository.findByCategoryIdAndUser_UserId(id, userId).map(Category::categoryDTOResponse)
+                .orElseThrow(() -> new NotFoundException("Category id " + id + " not found."));
     }
 
     @Override
     public void deleteCategoryByCategoryId(Long id, Long userId) {
-        categoryRepository.deleteCategoryByCategoryIdAndAndUser_UserId(id, userId);
+        checkExistCategoryId(id);
+
+        try {
+            categoryRepository.deleteCategoryByCategoryIdAndAndUser_UserId(id, userId);
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }
     }
 
     @Override
     public void updateCategoryByCategoryId(Long id, CategoryRequest categoryRequest, Long userId) {
-        categoryRepository.updateCategoryByCategoryId(id, categoryRequest.getCategoryName(), userId);
+        checkExistCategoryId(id);
+        checkCategoryName(categoryRequest.getCategoryName());
+
+        try {
+            categoryRepository.updateCategoryByCategoryId(id, categoryRequest.getCategoryName(), userId);
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }
     }
+
+    private void checkCategoryName(String categoryName) {
+        if(categoryName.isBlank()) {
+            throw new BlankFieldException("Category name is required.");
+        }
+
+        if(categoryRepository.findCategoryByCategoryName(categoryName).isPresent()) {
+            throw new AlreadyExistsException("Category already exists.");
+        }
+    }
+
+    private void checkExistCategoryId(Long id) {
+        if(categoryRepository.findById(id).isEmpty()) {
+            throw new NotFoundException("Category id " + id + " not found.");
+        }
+    }
+
 }

@@ -60,7 +60,7 @@ public class ArticleController {
 //    get article by id
     @GetMapping("/article/{id}")
     @Operation(summary = "Get article by id")
-    public ResponseEntity<ApiResponse<ArticleDTO>> getArticleById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ArticleDTO>> getArticleById(@PathVariable Long id) throws Exception {
         ApiResponse<ArticleDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Get article with id " + id + " successfully.");
@@ -86,7 +86,7 @@ public class ArticleController {
 //    update article by id
     @PutMapping("/author/article/{id}")
     @Operation(summary = "Edit article by id")
-    public ResponseEntity<ApiResponse<ArticleDTO>> updateArticleById(@PathVariable Long id, @RequestBody ArticleRequest articleRequest) {
+    public ResponseEntity<ApiResponse<ArticleDTO>> updateArticleById(@PathVariable Long id, @RequestBody ArticleRequest articleRequest) throws Exception {
         articleService.updateArticleByArticleId(id, articleRequest);
 
         ApiResponse<ArticleDTO> apiResponse = new ApiResponse<>();
@@ -100,7 +100,7 @@ public class ArticleController {
 //    add comment via article id and user id
     @PostMapping("/article/{id}/comment")
     @Operation(summary = "Post a comment on any article via its id")
-    public ResponseEntity<ApiResponse<ArticleDTO>> postCommentOnArticle(@RequestBody CommentRequest cmtRequest, @PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ArticleDTO>> postCommentOnArticle(@RequestBody CommentRequest cmtRequest, @PathVariable Long id) throws Exception {
         Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
         articleService.postCommentByArticleId(cmtRequest, id, userId);
         ApiResponse<ArticleDTO> apiResponse = new ApiResponse<>();
@@ -122,7 +122,7 @@ public class ArticleController {
 
     @GetMapping("/article/{id}/comment")
     @Operation(summary = "Get comments on any article")
-    public ResponseEntity<ApiResponse<ArticleDTO>> getCommentOnArticle(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ArticleDTO>> getCommentOnArticle(@PathVariable Long id) throws Exception {
         ArticleDTO article = articleService.getArticleByArticleId(id);
 
         ApiResponse<ArticleDTO> apiResponse = new ApiResponse<>();

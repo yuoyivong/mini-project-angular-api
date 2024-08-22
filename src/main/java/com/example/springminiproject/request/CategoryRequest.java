@@ -1,8 +1,11 @@
 package com.example.springminiproject.request;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class CategoryRequest {
 
     private String categoryName;

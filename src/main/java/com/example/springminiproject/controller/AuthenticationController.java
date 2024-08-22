@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {
-
     private final AuthenticationService authenticationService;
 
     public AuthenticationController(AuthenticationService authenticationService) {
@@ -27,9 +27,9 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     @Operation(summary = "Register as a new user")
-    public ResponseEntity<ApiResponse<UserDTO>> register(
-           @Valid @RequestBody UserRequest userRequest
-    ) {
+    public ResponseEntity<?> register(
+           @RequestBody UserRequest userRequest
+    ) throws Exception {
 
 //        if(request.getReaderName().isBlank()) {
 //            throw new BlankFieldExceptionHandler("Field readerName is empty");
@@ -53,6 +53,11 @@ public class AuthenticationController {
 //
 //        if(service.checkIfEmailAlreadyExist(request.getEmail())) {
 //            throw new IfAlreadyExistValidationException("This email is not single anymore!");
+//        }
+
+//        if(bindingResult.hasErrors()) {
+//            String message = bindingResult.hasFieldErrors("email");
+//            return ResponseEntity.badRequest().body("Validation failed");
 //        }
 
         ApiResponse<UserDTO> apiResponse = new ApiResponse<>();

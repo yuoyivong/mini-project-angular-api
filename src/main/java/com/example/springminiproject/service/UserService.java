@@ -2,7 +2,6 @@ package com.example.springminiproject.service;
 
 import com.example.springminiproject.request.UserRequest;
 import com.example.springminiproject.response.dto.UserDTO;
-import com.example.springminiproject.response.dto.UserEntityDTO;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public interface UserService {
 
     void deleteUserByUserId(Long id);
 
-    void updateUserById(Long id, UserRequest userRequest);
+    void updateUserById(Long id, UserRequest userRequest) throws Exception;
 
     UserDTO findUserByEmail(String email);
 

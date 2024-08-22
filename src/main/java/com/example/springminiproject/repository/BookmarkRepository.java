@@ -1,6 +1,7 @@
 package com.example.springminiproject.repository;
 
 import com.example.springminiproject.model.Article;
+import com.example.springminiproject.model.Bookmark;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,27 +11,24 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ArticleRepository extends JpaRepository<Article, Long> {
+public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     @Modifying
     @Transactional
     @Query(value = """
-        UPDATE article 
-        SET title = :title,
-            description = :description,
+        UPDATE bookmark
+        SET status = 0,
             updated_at = CURRENT_TIMESTAMP
-        WHERE article_id = :id
+        WHERE article_id = :articleId AND user_id = :userId
     """, nativeQuery = true)
-    void updateArticleByArticleId(Long id, String title, String description);
+    void updateBookmarkStatus(Long articleId, Long userId);
 
-//    post comment via article id and user id
-    @Modifying
-    @Transactional
     @Query(value = """
-        INSERT INTO comment(cmt, created_at, article_id, user_id)
-        VALUES(:cmt, CURRENT_TIMESTAMP, :articleId, :userId)
-    """, nativeQuery = true)
-    void postCommentOnArticle(String cmt, Long articleId, Long userId);
-
+        SELECT a
+        FROM article a
+        JOIN bookmark b ON a.articleId = b.article.articleId
+        WHERE b.status = 1
+    """)
+    Page<Article> getAllBookmarkArticles(Pageable pageable);
 
 }

@@ -17,15 +17,18 @@ public class Bookmark {
     @Column(name = "bookmark_id")
     private Long bookmarkId;
 
+    @Enumerated
+    private BookmarkStatus status;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+//    @ManyToOne
+//    @JoinColumn(name = "category_id")
+//    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "article_id")
@@ -34,4 +37,5 @@ public class Bookmark {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
 }

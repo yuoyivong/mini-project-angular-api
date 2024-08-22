@@ -9,11 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findCommentsByArticle_ArticleId(Long articleId);
-    Comment findCommentByCommentIdAndArticle_ArticleId(Long cmtId, Long artId);
+    Optional<Comment> findCommentByCommentIdAndArticle_ArticleId(Long cmtId, Long artId);
 
     @Modifying
     @Transactional

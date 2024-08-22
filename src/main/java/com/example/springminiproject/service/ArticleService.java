@@ -11,7 +11,7 @@ public interface ArticleService {
 
     List<ArticleDTO> getAllArticles(int pageNo, int pageSize, String sortBy, String sortDirection);
 
-    ArticleDTO getArticleByArticleId(Long id);
+    ArticleDTO getArticleByArticleId(Long id) throws Exception;
 
     void deleteArticleByArticleId(Long id);
 

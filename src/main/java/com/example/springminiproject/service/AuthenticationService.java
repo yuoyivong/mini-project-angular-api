@@ -8,9 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface AuthenticationService {
 
-    UserDTO register(UserRequest userRequest);
+    UserDTO register(UserRequest userRequest) throws Exception;
 
-    LoginResponse login(LoginRequest loginRequest);
+    LoginResponse login(LoginRequest loginRequest) throws Exception;
 
 //    UserDetails loadUserByUsername(String email);
 

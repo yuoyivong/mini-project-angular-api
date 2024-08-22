@@ -33,7 +33,7 @@ public class Article {
     private LocalDateTime updatedAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
-    private List<CategoryArticle> articleList;
+    private List<CategoryArticle> categoryArticleList;
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();

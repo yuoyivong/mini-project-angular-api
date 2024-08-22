@@ -67,7 +67,7 @@ public class CategoryController {
         ApiResponse<CategoryDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Get category with id " + id + " successfully.");
-        apiResponse.setPayload(categoryService.getCategoryByCategoryId(userId, id));
+        apiResponse.setPayload(categoryService.getCategoryByCategoryId(id, userId));
         return ResponseEntity.ok().body(apiResponse);
     }
 

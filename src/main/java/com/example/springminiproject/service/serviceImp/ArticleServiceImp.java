@@ -1,7 +1,14 @@
 package com.example.springminiproject.service.serviceImp;
 
+import com.example.springminiproject.config.GlobalCurrentUserConfig;
+import com.example.springminiproject.exception.BlankFieldException;
+import com.example.springminiproject.exception.NotFoundException;
 import com.example.springminiproject.model.Article;
+import com.example.springminiproject.model.Category;
+import com.example.springminiproject.model.CategoryArticle;
 import com.example.springminiproject.repository.ArticleRepository;
+import com.example.springminiproject.repository.CategoryArticleRepository;
+import com.example.springminiproject.repository.CategoryRepository;
 import com.example.springminiproject.repository.CommentRepository;
 import com.example.springminiproject.request.ArticleRequest;
 import com.example.springminiproject.request.CommentRequest;
@@ -22,19 +29,41 @@ public class ArticleServiceImp implements ArticleService {
 
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
+    private final CategoryRepository categoryRepository;
+    private final GlobalCurrentUserConfig currentUserConfig;
+    private final CategoryArticleRepository categoryArticleRepository;
 
-    public ArticleServiceImp(ArticleRepository articleRepository, CommentRepository commentRepository) {
+    public ArticleServiceImp(ArticleRepository articleRepository, CommentRepository commentRepository, CategoryRepository categoryRepository, GlobalCurrentUserConfig currentUserConfig, CategoryArticleRepository categoryArticleRepository) {
         this.articleRepository = articleRepository;
         this.commentRepository = commentRepository;
+        this.categoryRepository = categoryRepository;
+        this.currentUserConfig = currentUserConfig;
+        this.categoryArticleRepository = categoryArticleRepository;
     }
 
     @Override
     public ArticleDTO insertNewArticle(ArticleRequest articleRequest) {
+        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
+
+        checkExistCategoryId(articleRequest.getCategoryId(), userId);
+        notAllowEmptyTitle(articleRequest.getTitle());
 
         Article article = new Article();
         article.setTitle(articleRequest.getTitle());
         article.setDescription(articleRequest.getDescription());
         article.setCreatedAt(LocalDateTime.now());
+
+        for(Integer i: articleRequest.getCategoryId()) {
+            Category category = categoryRepository.findByCategoryIdAndUser_UserId(Long.valueOf(i), userId)
+                    .orElseThrow(() -> new NotFoundException("Category not found."));
+
+            CategoryArticle categoryArticle = new CategoryArticle();
+            categoryArticle.setArticle(article);
+            categoryArticle.setCategory(category);
+            categoryArticle.setCreatedAt(LocalDateTime.now());
+
+            categoryArticleRepository.save(categoryArticle);
+        }
 
         return articleRepository.save(article).articleDTOResponse();
 
@@ -53,23 +82,57 @@ public class ArticleServiceImp implements ArticleService {
     }
 
     @Override
-    public ArticleDTO getArticleByArticleId(Long id) {
-        return articleRepository.findById(id).map(Article::articleDTOResponse).orElseThrow();
+    public ArticleDTO getArticleByArticleId(Long id) throws Exception {
+        checkExistArticleId(id);
+
+        try {
+            return articleRepository.findById(id).map(Article::articleDTOResponse).orElseThrow();
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+
     }
 
     @Override
     public void deleteArticleByArticleId(Long id) {
-        articleRepository.deleteById(id);
+
+        checkExistArticleId(id);
+
+        try {
+            articleRepository.deleteById(id);
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }
+
     }
 
     @Override
     public void updateArticleByArticleId(Long id, ArticleRequest articleRequest) {
-        articleRepository.updateArticleByArticleId(id, articleRequest.getTitle(), articleRequest.getDescription());
+        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
+        checkExistArticleId(id);
+        notAllowEmptyTitle(articleRequest.getTitle());
+        checkExistCategoryId(articleRequest.getCategoryId(), userId);
+
+        try {
+            articleRepository.updateArticleByArticleId(id, articleRequest.getTitle(), articleRequest.getDescription());
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }
+
     }
 
     @Override
     public void postCommentByArticleId(CommentRequest commentRequest, Long id, Long userId) {
-        articleRepository.postCommentOnArticle(commentRequest.getComment(), id, userId);
+        checkExistArticleId(id);
+
+        try {
+            if(!commentRequest.getComment().isBlank()) {
+                articleRepository.postCommentOnArticle(commentRequest.getComment(), id, userId);
+            }
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }
+
     }
 
 //    @Override
@@ -84,7 +147,34 @@ public class ArticleServiceImp implements ArticleService {
 
     @Override
     public void updatePostedComment(Long cmtId, Long articleId, Long userId, String cmt) {
+
         commentRepository.updateComment(cmtId, articleId, userId, cmt);
+
     }
 
+//    check whether the article id exists or not
+    private void checkExistArticleId(Long id) {
+
+        if(articleRepository.findById(id).isEmpty()) {
+            throw new NotFoundException("Article id " + id + " not found.");
+        }
+
+    }
+
+//    check whether category id exits or not
+    private void checkExistCategoryId(List<Integer> categoryIdList, Long userId) {
+
+        for(Integer i: categoryIdList) {
+            if(categoryRepository.findByCategoryIdAndUser_UserId(Long.valueOf(i), userId).isEmpty()) {
+                throw new NotFoundException("Category id " + i + " not found");
+            }
+        }
+
+    }
+
+    private void notAllowEmptyTitle(String title) {
+        if(title.isBlank()) {
+            throw new BlankFieldException("Title cannot be empty.");
+        }
+    }
 }
