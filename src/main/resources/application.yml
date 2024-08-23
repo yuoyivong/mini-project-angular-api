@@ -2,9 +2,9 @@ spring:
   application:
     name: spring-mini-project
   datasource:
-    url: jdbc:postgresql://localhost:5433/mini_project_db
-    username: postgres
-    password: 1231
+    url: jdbc:postgresql://ep-rough-frog-a2asrwp0.eu-central-1.pg.koyeb.app:5432/koyebdb
+    username: koyeb-adm
+    password: OuJno7xCv1Fl
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

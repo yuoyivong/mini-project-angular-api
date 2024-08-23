@@ -58,7 +58,6 @@ public class Article {
         List<Long> categoryIdList = this.categoryArticleList.stream()
                 .map(ca -> ca.getCategory().getCategoryId())
                 .collect(Collectors.toList());
-        System.out.println("Hello : " + categoryIdList);
 
         articleDTO.setCategoryIdList(categoryIdList);
 
