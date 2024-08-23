@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
     @Query(value = """
         UPDATE bookmark
@@ -27,8 +27,9 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
         SELECT a
         FROM article a
         JOIN bookmark b ON a.articleId = b.article.articleId
-        WHERE b.status = 1
+        JOIN b.user u
+        WHERE b.status = 1 AND u.userId = :userId
     """)
-    Page<Article> getAllBookmarkArticles(Pageable pageable);
+    Page<Article> getAllBookmarkArticles(Long userId, Pageable pageable);
 
 }

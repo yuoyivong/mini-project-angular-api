@@ -1,11 +1,13 @@
 package com.example.springminiproject.service.serviceImp;
 
 import com.example.springminiproject.config.GlobalCurrentUserConfig;
+import com.example.springminiproject.exception.AccessDeniedException;
 import com.example.springminiproject.exception.BlankFieldException;
 import com.example.springminiproject.exception.NotFoundException;
 import com.example.springminiproject.model.Article;
 import com.example.springminiproject.model.Category;
 import com.example.springminiproject.model.CategoryArticle;
+import com.example.springminiproject.model.User;
 import com.example.springminiproject.repository.ArticleRepository;
 import com.example.springminiproject.repository.CategoryArticleRepository;
 import com.example.springminiproject.repository.CategoryRepository;
@@ -13,6 +15,7 @@ import com.example.springminiproject.repository.CommentRepository;
 import com.example.springminiproject.request.ArticleRequest;
 import com.example.springminiproject.request.CommentRequest;
 import com.example.springminiproject.response.dto.ArticleDTO;
+import com.example.springminiproject.response.dto.UserDTO;
 import com.example.springminiproject.service.ArticleService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,44 +31,57 @@ import java.util.stream.Collectors;
 public class ArticleServiceImp implements ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final CommentRepository commentRepository;
     private final CategoryRepository categoryRepository;
-    private final GlobalCurrentUserConfig currentUserConfig;
     private final CategoryArticleRepository categoryArticleRepository;
 
-    public ArticleServiceImp(ArticleRepository articleRepository, CommentRepository commentRepository, CategoryRepository categoryRepository, GlobalCurrentUserConfig currentUserConfig, CategoryArticleRepository categoryArticleRepository) {
+    public ArticleServiceImp(ArticleRepository articleRepository, CategoryRepository categoryRepository, CategoryArticleRepository categoryArticleRepository) {
         this.articleRepository = articleRepository;
-        this.commentRepository = commentRepository;
         this.categoryRepository = categoryRepository;
-        this.currentUserConfig = currentUserConfig;
         this.categoryArticleRepository = categoryArticleRepository;
     }
 
     @Override
-    public ArticleDTO insertNewArticle(ArticleRequest articleRequest) {
-        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
+    public ArticleDTO insertNewArticle(ArticleRequest articleRequest, UserDTO user) throws Exception {
+//        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
 
-        checkExistCategoryId(articleRequest.getCategoryId(), userId);
+//        User user = u
+        checkExistCategoryId(articleRequest.getCategoryId(), user.getUserId());
         notAllowEmptyTitle(articleRequest.getTitle());
 
-        Article article = new Article();
-        article.setTitle(articleRequest.getTitle());
-        article.setDescription(articleRequest.getDescription());
-        article.setCreatedAt(LocalDateTime.now());
+        try {
 
-        for(Integer i: articleRequest.getCategoryId()) {
-            Category category = categoryRepository.findByCategoryIdAndUser_UserId(Long.valueOf(i), userId)
-                    .orElseThrow(() -> new NotFoundException("Category not found."));
+            User u = new User();
+            u.setUserId(user.getUserId());
+            u.setUsername(user.getUsername());
+            u.setEmail(user.getEmail());
+            u.setAddress(user.getAddress());
+            u.setPhoneNumber(user.getPhoneNumber());
+            u.setCreatedAt(user.getCreatedAt());
+            u.setUpdatedAt(user.getUpdatedAt());
+            u.setRole(user.getRole());
 
-            CategoryArticle categoryArticle = new CategoryArticle();
-            categoryArticle.setArticle(article);
-            categoryArticle.setCategory(category);
-            categoryArticle.setCreatedAt(LocalDateTime.now());
+            Article article = new Article();
+            article.setTitle(articleRequest.getTitle());
+            article.setDescription(articleRequest.getDescription());
+            article.setCreatedAt(LocalDateTime.now());
+            article.setUser(u);
 
-            categoryArticleRepository.save(categoryArticle);
+            for(Integer i: articleRequest.getCategoryId()) {
+                Category category = categoryRepository.findByCategoryIdAndUser_UserId(Long.valueOf(i), user.getUserId())
+                        .orElseThrow(() -> new NotFoundException("Category not found."));
+
+                CategoryArticle categoryArticle = new CategoryArticle();
+                categoryArticle.setArticle(article);
+                categoryArticle.setCategory(category);
+                categoryArticle.setCreatedAt(LocalDateTime.now());
+
+                categoryArticleRepository.save(categoryArticle);
+            }
+
+            return articleRepository.save(article).articleDTOResponse();
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
-
-        return articleRepository.save(article).articleDTOResponse();
 
     }
 
@@ -94,12 +110,12 @@ public class ArticleServiceImp implements ArticleService {
     }
 
     @Override
-    public void deleteArticleByArticleId(Long id) {
+    public void deleteArticleByArticleId(Long id, Long userId) {
 
-        checkExistArticleId(id);
+        isOwnerOfArticle(id, userId);
 
         try {
-            articleRepository.deleteById(id);
+            articleRepository.deleteArticleByArticleIdAndUser_UserId(id, userId);
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         }
@@ -107,14 +123,14 @@ public class ArticleServiceImp implements ArticleService {
     }
 
     @Override
-    public void updateArticleByArticleId(Long id, ArticleRequest articleRequest) {
-        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
-        checkExistArticleId(id);
+    public void updateArticleByArticleId(Long id, ArticleRequest articleRequest, Long userId) {
+//        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
+        isOwnerOfArticle(id, userId);
         notAllowEmptyTitle(articleRequest.getTitle());
         checkExistCategoryId(articleRequest.getCategoryId(), userId);
 
         try {
-            articleRepository.updateArticleByArticleId(id, articleRequest.getTitle(), articleRequest.getDescription());
+            articleRepository.updateArticleByArticleId(id, articleRequest.getTitle(), articleRequest.getDescription(), userId);
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         }
@@ -145,12 +161,12 @@ public class ArticleServiceImp implements ArticleService {
 //        return commentRepository.findCommentsByArticle_ArticleId(id).stream().map(Comment::commentDTOResponse).collect(Collectors.toList());
 //    }
 
-    @Override
-    public void updatePostedComment(Long cmtId, Long articleId, Long userId, String cmt) {
-
-        commentRepository.updateComment(cmtId, articleId, userId, cmt);
-
-    }
+//    @Override
+//    public void updatePostedComment(Long cmtId, Long userId, String cmt) {
+//
+//        commentRepository.updateComment(cmtId, userId, cmt);
+//
+//    }
 
 //    check whether the article id exists or not
     private void checkExistArticleId(Long id) {
@@ -175,6 +191,12 @@ public class ArticleServiceImp implements ArticleService {
     private void notAllowEmptyTitle(String title) {
         if(title.isBlank()) {
             throw new BlankFieldException("Title cannot be empty.");
+        }
+    }
+
+    private void isOwnerOfArticle(Long articleId, Long userId) {
+        if(articleRepository.findArticleByArticleIdAndUser_UserId(articleId, userId).isEmpty()) {
+            throw new AccessDeniedException("Cannot delete/update not found article id " + articleId);
         }
     }
 }

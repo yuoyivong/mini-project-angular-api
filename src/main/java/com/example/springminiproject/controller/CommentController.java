@@ -26,20 +26,21 @@ public class CommentController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get comment by its id")
-    public ResponseEntity<ApiResponse<CommentDTO>> getCommentById(@PathVariable Long id, @RequestParam Long articleId) {
+    public ResponseEntity<ApiResponse<CommentDTO>> getCommentById(@PathVariable Long id) {
+        Long userId = globalCurrentUser.getCurrentUserInformation().getUserId();
         ApiResponse<CommentDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Get comment id " + id + " successfully.");
-        apiResponse.setPayload(commentService.getCommentOnArticle(id, articleId));
+        apiResponse.setPayload(commentService.getCommentOnArticleById(id, userId));
         return ResponseEntity.ok().body(apiResponse);
     }
 
 //    delete comment by id
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete comment its by id")
-    public ResponseEntity<ApiResponse<CommentDTO>> deleteCommentById(@PathVariable Long id, @RequestParam Long articleId) {
+    public ResponseEntity<ApiResponse<CommentDTO>> deleteCommentById(@PathVariable Long id) {
         Long userId = globalCurrentUser.getCurrentUserInformation().getUserId();
-        commentService.deleteCommentById(id, articleId, userId);
+        commentService.deleteCommentById(id, userId);
 
         ApiResponse<CommentDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
@@ -50,14 +51,14 @@ public class CommentController {
     //    update comment by id
     @PutMapping("/{id}")
     @Operation(summary = "Edit comment by its id")
-    public ResponseEntity<ApiResponse<CommentDTO>> updateCommentById(@PathVariable Long id, @RequestParam Long articleId, @RequestBody CommentRequest commentRequest) {
-//        Long userId = globalCurrentUser.getCurrentUserInformation().getUserId();
-//        commentService.updateCommentByCommentId(id, articleId, userId, commentRequest);
+    public ResponseEntity<ApiResponse<CommentDTO>> updateCommentById(@PathVariable Long id, @RequestBody CommentRequest commentRequest) {
+        Long userId = globalCurrentUser.getCurrentUserInformation().getUserId();
+        commentService.updateCommentByCommentId(id, userId, commentRequest);
 
         ApiResponse<CommentDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Update comment id " + id + " successfully.");
-        apiResponse.setPayload(commentService.getCommentOnArticle(id, articleId));
+        apiResponse.setPayload(commentService.getCommentOnArticleById(id, userId));
         return ResponseEntity.ok().body(apiResponse);
     }
 

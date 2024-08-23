@@ -69,11 +69,11 @@ public class BookmarkServiceImp implements BookmarkService {
     }
 
     @Override
-    public List<ArticleDTO> getAllBookmarkArticles(Long userId, int pageNo, int pageSize, String sortBy, String sortDirection) {
+    public List<ArticleDTO> getAllBookmarkArticlesByUserId(Long userId, int pageNo, int pageSize, String sortBy, String sortDirection) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        Page<Article> bookmarkPage = bookmarkRepository.getAllBookmarkArticles(pageable);
+        Page<Article> bookmarkPage = bookmarkRepository.getAllBookmarkArticles(userId, pageable);
 
         return bookmarkPage.stream().map(Article::articleDTOResponse).collect(Collectors.toList());
     }

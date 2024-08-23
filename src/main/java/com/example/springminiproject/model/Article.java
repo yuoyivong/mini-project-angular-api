@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -32,14 +33,18 @@ public class Article {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
-    private List<CategoryArticle> categoryArticleList;
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    private List<CategoryArticle> categoryArticleList = new ArrayList<>();
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "article")
     private List<Bookmark> bookmarkList = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user = new User();
 
     public ArticleDTO articleDTOResponse() {
         ArticleDTO articleDTO = new ArticleDTO();
@@ -48,6 +53,14 @@ public class Article {
         articleDTO.setDescription(this.description);
         articleDTO.setCreatedAt(this.createdAt);
         articleDTO.setUpdatedAt(this.updatedAt);
+        articleDTO.setOwnerOfArticle(this.user.getUserId());
+
+        List<Long> categoryIdList = this.categoryArticleList.stream()
+                .map(ca -> ca.getCategory().getCategoryId())
+                .collect(Collectors.toList());
+        System.out.println("Hello : " + categoryIdList);
+
+        articleDTO.setCategoryIdList(categoryIdList);
 
         Set<CommentDTO> commentDTOSet = new HashSet<>();
 
@@ -62,38 +75,6 @@ public class Article {
         }
 
         articleDTO.setCommentList(new ArrayList<>(commentDTOSet));
-
-
-//        List<UserCommentDTO> userCommentDTOList = new ArrayList<>();
-//        for (Comment c : this.commentList) {
-//            userCommentDTOList.add(new CommentDTO(c.getCommentId(), c.getCmt(), c.getCreatedAt(), c.getUpdatedAt()));
-//        }
-
-//        articleDTO.setCommentList(commentDTOList);
-
-//        Map<Long, UserCommentDTO> userMap = new HashMap<>();
-//
-//        for (Comment c : this.commentList) {
-//            User user = c.getUser();
-//
-//            UserCommentDTO userCommentDTO = userMap.computeIfAbsent(user.getUserId(), id -> {
-//                UserCommentDTO newUserDTO = new UserCommentDTO();
-//                newUserDTO.setUserId(user.getUserId());
-//                newUserDTO.setUsername(user.getUsername());
-//                newUserDTO.setEmail(user.getEmail());
-//                newUserDTO.setAddress(user.getAddress());
-//                newUserDTO.setPhoneNumber(user.getPhoneNumber());
-//                newUserDTO.setCreatedAt(user.getCreatedAt());
-//                newUserDTO.setUpdatedAt(user.getUpdatedAt());
-//                newUserDTO.setCommentList(new ArrayList<>());
-//                return newUserDTO;
-//            });
-//
-//            userCommentDTO.getCommentList().add(new CommentDTO(c.getCommentId(), c.getCmt(), c.getCreatedAt(), c.getUpdatedAt()));
-//
-//        }
-//
-//        articleDTO.setUserCommentList(new ArrayList<>(userMap.values()));
 
         return articleDTO;
 

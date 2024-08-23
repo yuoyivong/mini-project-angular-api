@@ -70,7 +70,7 @@ public class BookmarkController {
     ) {
 
         Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
-        List<ArticleDTO> articleDTOList = bookmarkService.getAllBookmarkArticles(userId, pageNo, pageSize, sortBy, sortDirection);
+        List<ArticleDTO> articleDTOList = bookmarkService.getAllBookmarkArticlesByUserId(userId, pageNo, pageSize, sortBy, sortDirection);
 
         ApiResponse<List<ArticleDTO>> apiResponse = new ApiResponse<>();
         apiResponse.setMessage("Get all bookmarked articles successfully.");

@@ -1,5 +1,6 @@
 package com.example.springminiproject.model;
 
+import com.example.springminiproject.response.dto.ArticleDTO;
 import com.example.springminiproject.response.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -51,6 +52,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private List<Comment> commentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    private List<Article> article = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private Role role;

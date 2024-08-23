@@ -17,12 +17,12 @@ public class CommentServiceImp implements CommentService {
     }
 
     @Override
-    public CommentDTO getCommentOnArticle(Long id, Long articleId) {
+    public CommentDTO getCommentOnArticleById(Long id, Long userId) {
 //        return commentRepository.findById(id).map(Comment::commentDTOResponse).orElseThrow();
-        checkCommentOnArticle(id, articleId);
+        checkCommentOnArticle(id, userId);
 
         try {
-            return commentRepository.findCommentByCommentIdAndArticle_ArticleId(id, articleId)
+            return commentRepository.findById(id)
                     .map(Comment::commentDTOResponse).orElseThrow();
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
@@ -31,8 +31,8 @@ public class CommentServiceImp implements CommentService {
     }
 
     @Override
-    public void deleteCommentById(Long id, Long articleId, Long userId) {
-        checkCommentOnArticle(id, articleId);
+    public void deleteCommentById(Long id, Long userId) {
+        checkCommentOnArticle(id, userId);
 
         try {
             commentRepository.deleteById(id);
@@ -42,22 +42,31 @@ public class CommentServiceImp implements CommentService {
     }
 
     @Override
-    public void updateCommentByCommentId(Long id, Long articleId, Long userId, CommentRequest commentRequest) {
-        checkCommentOnArticle(id, articleId);
+    public void updateCommentByCommentId(Long id, Long userId, CommentRequest commentRequest) {
+        checkCommentOnArticle(id, userId);
 
         try {
             if(!commentRequest.getComment().isBlank()) {
-                commentRepository.updateComment(id, articleId, userId, commentRequest.getComment());
+                commentRepository.updateComment(id, userId, commentRequest.getComment());
             }
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         }
     }
 
-    private void checkCommentOnArticle(Long cmtId, Long articleId) {
-        if(commentRepository.findCommentByCommentIdAndArticle_ArticleId(cmtId, articleId).isEmpty()) {
-            throw new NotFoundException("Comment on article not found.");
+//    private void checkCommentOnArticle(Long cmtId) {
+//        if(commentRepository.findById(cmtId).isEmpty()) {
+//            throw new NotFoundException("Comment on article not found.");
+//        }
+//
+//
+//    }
+
+    private void checkCommentOnArticle(Long cmtId, Long userId) {
+        if(commentRepository.findCommentByCommentIdAndUser_UserId(cmtId, userId).isEmpty()) {
+            throw new NotFoundException("Comment id " + cmtId + " not found.");
         }
     }
+
 
 }

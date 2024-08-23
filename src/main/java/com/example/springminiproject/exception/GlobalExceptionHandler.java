@@ -1,13 +1,16 @@
 package com.example.springminiproject.exception;
 
 import com.example.springminiproject.response.CustomErrorResponse;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -81,5 +84,30 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public @ResponseBody CustomErrorResponse handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        Throwable mostSpecificCause = ex.getMostSpecificCause();
+        String errorMessage = "Invalid input provided";
 
+        if (mostSpecificCause instanceof InvalidFormatException invalidFormatException) {
+            String targetType = invalidFormatException.getTargetType().getSimpleName();
+            String invalidValue = invalidFormatException.getValue().toString();
+            String normalizedValue = invalidValue.toUpperCase();
+
+            // Define available roles (or other enum values) in uppercase
+            Set<String> availableValues = Set.of("AUTHOR", "READER");
+
+            if (!availableValues.contains(normalizedValue)) {
+                errorMessage = String.format("Invalid value '%s' for %s (available roles are %s)",
+                        invalidValue, targetType, String.join(", ", availableValues));
+            }
+        }
+
+        return new CustomErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                errorMessage
+        );
+    }
 }

@@ -21,7 +21,7 @@ public class Category {
     @Column(name = "category_id")
     private Long categoryId;
 
-    @Column(name = "category_name", nullable = false, unique = true)
+    @Column(name = "category_name", nullable = false)
     private String categoryName;
 
     @Column(name = "amount_of_articles")
@@ -33,7 +33,7 @@ public class Category {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
     private List<CategoryArticle> categoryArticleList = new ArrayList<>();
 
     @ManyToOne
@@ -56,6 +56,8 @@ public class Category {
                     a.getTitle(),
                     a.getDescription(),
                     a.getCreatedAt(),
+                    a.articleDTOResponse().getOwnerOfArticle(),
+                    a.articleDTOResponse().getCategoryIdList(),
                     a.getUpdatedAt(),
                     a.articleDTOResponse().getCommentList()
             ));

@@ -5,10 +5,10 @@ import com.example.springminiproject.response.dto.CommentDTO;
 
 public interface CommentService {
 
-    CommentDTO getCommentOnArticle(Long id, Long articleId);
+    CommentDTO getCommentOnArticleById(Long id, Long userId);
 
-    void deleteCommentById(Long id, Long articleId, Long userId);
+    void deleteCommentById(Long id,  Long userId);
 
-    void updateCommentByCommentId(Long id, Long articleId, Long userId, CommentRequest commentRequest);
+    void updateCommentByCommentId(Long id, Long userId, CommentRequest commentRequest);
 
 }

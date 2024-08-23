@@ -6,6 +6,7 @@ import com.example.springminiproject.request.ArticleRequest;
 import com.example.springminiproject.request.CommentRequest;
 import com.example.springminiproject.response.ApiResponse;
 import com.example.springminiproject.response.dto.ArticleDTO;
+import com.example.springminiproject.response.dto.UserDTO;
 import com.example.springminiproject.service.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -30,11 +31,12 @@ public class ArticleController {
 //    create a new article
     @PostMapping("/author/article")
     @Operation(summary = "Create a new article")
-    public ResponseEntity<ApiResponse<ArticleDTO>> insertNewArticle(@RequestBody ArticleRequest articleRequest) {
+    public ResponseEntity<ApiResponse<ArticleDTO>> insertNewArticle(@RequestBody ArticleRequest articleRequest) throws Exception {
+        UserDTO user = currentUserConfig.getCurrentUserInformation();
         ApiResponse<ArticleDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.CREATED);
         apiResponse.setMessage("A new article is created successfully.");
-        apiResponse.setPayload(articleService.insertNewArticle(articleRequest));
+        apiResponse.setPayload(articleService.insertNewArticle(articleRequest, user));
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
@@ -73,7 +75,9 @@ public class ArticleController {
     @DeleteMapping("/author/article/{id}")
     @Operation(summary = "Delete article by id")
     public ResponseEntity<ApiResponse<Article>> deleteArticleById(@PathVariable Long id) {
-        articleService.deleteArticleByArticleId(id);
+        Long userId =currentUserConfig.getCurrentUserInformation().getUserId();
+
+        articleService.deleteArticleByArticleId(id, userId);
 
         ApiResponse<Article> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
@@ -87,7 +91,8 @@ public class ArticleController {
     @PutMapping("/author/article/{id}")
     @Operation(summary = "Edit article by id")
     public ResponseEntity<ApiResponse<ArticleDTO>> updateArticleById(@PathVariable Long id, @RequestBody ArticleRequest articleRequest) throws Exception {
-        articleService.updateArticleByArticleId(id, articleRequest);
+        Long userId = currentUserConfig.getCurrentUserInformation().getUserId();
+        articleService.updateArticleByArticleId(id, articleRequest, userId);
 
         ApiResponse<ArticleDTO> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);

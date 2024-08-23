@@ -33,7 +33,7 @@ public class CategoryServiceImp implements CategoryService {
 
     @Override
     public CategoryDTO insertNewCategory(UserDTO user, CategoryRequest categoryRequest) {
-        checkCategoryName(categoryRequest.getCategoryName());
+        checkCategoryName(categoryRequest.getCategoryName(), user.getUserId());
 
         try {
             User u = new User();
@@ -83,7 +83,7 @@ public class CategoryServiceImp implements CategoryService {
 
     @Override
     public void deleteCategoryByCategoryId(Long id, Long userId) {
-        checkExistCategoryId(id);
+        checkExistCategoryId(id, userId);
 
         try {
             categoryRepository.deleteCategoryByCategoryIdAndAndUser_UserId(id, userId);
@@ -94,8 +94,8 @@ public class CategoryServiceImp implements CategoryService {
 
     @Override
     public void updateCategoryByCategoryId(Long id, CategoryRequest categoryRequest, Long userId) {
-        checkExistCategoryId(id);
-        checkCategoryName(categoryRequest.getCategoryName());
+        checkExistCategoryId(id, userId);
+        checkCategoryName(categoryRequest.getCategoryName(), userId);
 
         try {
             categoryRepository.updateCategoryByCategoryId(id, categoryRequest.getCategoryName(), userId);
@@ -104,18 +104,19 @@ public class CategoryServiceImp implements CategoryService {
         }
     }
 
-    private void checkCategoryName(String categoryName) {
+    private void checkCategoryName(String categoryName, Long userId) {
         if(categoryName.isBlank()) {
             throw new BlankFieldException("Category name is required.");
         }
 
-        if(categoryRepository.findCategoryByCategoryName(categoryName).isPresent()) {
+        if(categoryRepository.findCategoryByCategoryNameAndUser_UserId(categoryName, userId).isPresent()) {
             throw new AlreadyExistsException("Category already exists.");
         }
+
     }
 
-    private void checkExistCategoryId(Long id) {
-        if(categoryRepository.findById(id).isEmpty()) {
+    private void checkExistCategoryId(Long id, Long userId) {
+        if(categoryRepository.findByCategoryIdAndUser_UserId(id, userId).isEmpty()) {
             throw new NotFoundException("Category id " + id + " not found.");
         }
     }

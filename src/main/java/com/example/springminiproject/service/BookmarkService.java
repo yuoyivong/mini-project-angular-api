@@ -10,6 +10,6 @@ public interface BookmarkService {
 
     void unBookmarkArticle(Long articleId, Long userId);
 
-    List<ArticleDTO> getAllBookmarkArticles(Long userId, int pageNo, int pageSize, String sortBy, String sortDirection);
+    List<ArticleDTO> getAllBookmarkArticlesByUserId(Long userId, int pageNo, int pageSize, String sortBy, String sortDirection);
 
 }

@@ -106,11 +106,8 @@ public class UserServiceImp implements UserService {
             throw new RegexPatternException("Invalid email address.");
         }
 
-//        UserDTO existingUser = userRepository.findUserByEmail(userRequest.getEmail()).orElseThrow(null).userDTOResponse();
-
-
 //        phone number field checked
-        if(!userRequest.getPhoneNumber().isBlank() && !userRequest.getPhoneNumber().matches("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$")) {
+        if(userRequest.getPhoneNumber() != null && !userRequest.getPhoneNumber().matches("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$")) {
             throw new RegexPatternException("Phone number should follow this format: 012-333-4321 or 012 333 4321.");
         }
 

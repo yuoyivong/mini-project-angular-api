@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -32,8 +33,6 @@ public class AuthenticationServiceImp implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
-    private boolean checkEmail;
 
 
     @Override
@@ -99,7 +98,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
 //    }
 
     private void createNewUserValidation(UserRequest userRequest) {
-
+//        System.out.println(Role.isValidEnum("Reader"));
 //        email field checked
         if(userRequest.getEmail().isBlank()) {
             throw new BlankFieldException("Email is required.");
@@ -116,8 +115,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
 
 //        phone number field checked
-        if(!userRequest.getPhoneNumber().isBlank() && !userRequest.getPhoneNumber().matches("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$")) {
-            throw new RegexPatternException("Phone number should follow this format: 012-333-4321 or 012 333 4321.");
+        if(!userRequest.getPhoneNumber().isBlank() && !userRequest.getPhoneNumber().matches("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{3,4}$")) {
+            throw new RegexPatternException("Phone number should follow this format: 012-333-432 or 012 333 4321.");
         }
 
 //        password checked
@@ -126,10 +125,14 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
 
         if(!userRequest.getPassword().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
-            throw new RegexPatternException("Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character.");
+            throw new RegexPatternException("Password should have minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character.");
         }
 
 //        role checked - pending
+
+//        if(Role.isValidEnum(use)) {
+//            throw new MismatchException("You can choose to be a READER or an AUTHOR.");
+//        }
 //        if(userRequest.getRole() == null) {
 //            throw new BlankFieldException("Role is required.");
 //        }
@@ -170,6 +173,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
         if(user.filter(value -> passwordEncoder.matches(password, value.getPassword())).isEmpty()) {
             throw new MismatchException("Password does not match.");
         }
+
     }
 
 }

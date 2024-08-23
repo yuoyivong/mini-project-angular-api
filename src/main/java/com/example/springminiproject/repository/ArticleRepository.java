@@ -9,19 +9,21 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
     @Query(value = """
         UPDATE article 
         SET title = :title,
             description = :description,
             updated_at = CURRENT_TIMESTAMP
-        WHERE article_id = :id
+        WHERE article_id = :id AND user_id = :userId
     """, nativeQuery = true)
-    void updateArticleByArticleId(Long id, String title, String description);
+    void updateArticleByArticleId(Long id, String title, String description, Long userId);
 
 //    post comment via article id and user id
     @Modifying
@@ -31,6 +33,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
         VALUES(:cmt, CURRENT_TIMESTAMP, :articleId, :userId)
     """, nativeQuery = true)
     void postCommentOnArticle(String cmt, Long articleId, Long userId);
+
+    void deleteArticleByArticleIdAndUser_UserId(Long articleId, Long userId);
+
+    Optional<Article> findArticleByArticleIdAndUser_UserId(Long articleId, Long userId);
 
 
 }

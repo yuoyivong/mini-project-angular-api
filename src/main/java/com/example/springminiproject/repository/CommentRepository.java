@@ -15,14 +15,15 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> findCommentByCommentIdAndArticle_ArticleId(Long cmtId, Long artId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
     @Query(value = """
         UPDATE comment
         SET cmt = :comment,
             updated_at = CURRENT_TIMESTAMP
-        WHERE comment_id = :cmtId AND article_id = :articleId AND user_id = :userId
+        WHERE comment_id = :cmtId AND user_id = :userId
     """, nativeQuery = true)
-    void updateComment(Long cmtId, Long articleId, Long userId, String comment);
+    void updateComment(Long cmtId, Long userId, String comment);
 
+    Optional<Comment> findCommentByCommentIdAndUser_UserId(Long cmtId, Long userId);
 }
