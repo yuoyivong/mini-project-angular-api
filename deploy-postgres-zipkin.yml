@@ -1,0 +1,20 @@
+services:
+  task_db_postgres:
+    image: postgres:16
+    container_name: task_db_container
+    restart: always
+    environment:
+      POSTGRES_USER: task
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: task_db
+
+    ports:
+      - "5435:5432"
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    environment:
+      - STORAGE_TYPE=mem
+    ports:
+      - "9411:9411"

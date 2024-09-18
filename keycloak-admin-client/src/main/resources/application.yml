@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: keycloak-admin-client
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: "keycloak_task_client"
+            client-secret: "78LAJTkzmmhdpp0ciSsNUAcdmWNUy0v4"
+            scope: openid, profile
+            authorization-grant-type: "client_credentials"
+            redirect-uri: "http://localhost:8081/swagger-ui/index.html"
+        provider:
+          keycloak:
+            issuer-uri: "http://localhost:8090/realms/task_realm"
+            jwk-set-uri: "http://localhost:8090/realms/task_realm/protocol/openid-connect/certs"
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:8090/realms/task_realm"
+          jwk-set-uri: "http://localhost:8090/realms/task_realm/protocol/openid-connect/certs"
+
+keycloak:
+  realm: "task_realm"
+  resource: "keycloak_task_client"
+  auth-server-url: "http://localhost:8090"
+  credentials:
+    username: 'admin'
+    password: 'admin'
+    client-id: 'keycloak_task_client'
+    secret: '78LAJTkzmmhdpp0ciSsNUAcdmWNUy0v4'
+    provider: secret
+
+openapi:
+  service:
+    title: Keycloak Admin Client
+    version: 3.3.2
+    url: http://localhost:8888
+
+springdoc:
+  api-docs:
+    path: /keycloak-admin-client/v3/api-docs
+  swagger-ui:
+    path: /keycloak-admin-client/swagger-ui.html
+#    oauth2RedirectUrl: "http://localhost:8081/swagger-ui/index.html"
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+server:
+  port: 8081
