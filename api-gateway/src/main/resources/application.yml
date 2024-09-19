@@ -22,12 +22,12 @@ spring:
         - id: keycloak-admin-client-route
           uri: lb://KEYCLOAK-ADMIN-CLIENT
           predicates:
-            - Path=/keycloak-admin-client/v3/api-docs, /api/v1/**
+            - Path=/keycloak-admin-client/v3/api-docs, /api/v1/users, /api/v1/user/**, /api/v1/groups, /api/v1/group/**
 
         - id: task-service-route
           uri: http://localhost:8085
           predicates:
-            - Path=/task-service/v3/api-docs, /api/v1/**
+            - Path=/task-service/v3/api-docs, /api/v1/tasks, /api/v1/task/**
 
 springdoc:
   api-docs:

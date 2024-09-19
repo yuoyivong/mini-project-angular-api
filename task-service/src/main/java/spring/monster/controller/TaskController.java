@@ -22,6 +22,11 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    @GetMapping("/test")
+    public String display() {
+        return "test";
+    }
+
 //    create new task
     @PostMapping("/task")
     public ResponseEntity<ApiResponse<TaskResponse>> createNewTask(@RequestBody TaskRequest taskRequest) {
@@ -40,6 +45,7 @@ public class TaskController {
             @RequestParam(defaultValue = "taskName") String sortBy,
             @RequestParam(defaultValue = "ASC") String sortDirection
     ) {
+        System.out.println("Hello World ");
         ApiResponse<List<TaskResponse>> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setMessage("Get all tasks successfully.");
